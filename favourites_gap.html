@@ -1,0 +1,313 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Favourites Gap</title></head><body><nav aria-label="Wine pages" style="font:14px system-ui;padding:12px 16px;border-bottom:1px solid #ddd;background:#faf7f2;color:#542636"><a style="color:inherit" href="index.html">Cellar dashboard</a> · <a style="color:inherit" href="pages.html">All wine pages</a></nav>
+<style>
+:root{--bg:#faf9f7;--fg:#1b1917;--mut:#6d665d;--line:#e4dfd7;--card:#fff;--hk:#8a5a2b;--uk:#2f5d50;--warn:#8a2b2b;--ok:#2f6b45}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15141200;--bg:#151412;--fg:#ece7df;--mut:#9b938a;--line:#332f2a;--card:#1d1b18;--hk:#d9a066;--uk:#7fbfa8;--warn:#e08a8a;--ok:#7fbf95}}
+:root[data-theme=dark]{--bg:#151412;--fg:#ece7df;--mut:#9b938a;--line:#332f2a;--card:#1d1b18;--hk:#d9a066;--uk:#7fbfa8;--warn:#e08a8a;--ok:#7fbf95}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 ui-serif,Georgia,serif;padding:2.5rem 1.25rem 5rem}
+.wrap{max-width:66rem;margin:0 auto;display:flex;flex-direction:column;gap:2.25rem}
+h1{font-size:2rem;margin:0;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:.4rem 0 0}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(8.5rem,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--card);padding:.9rem 1rem}
+.stat b{display:block;font-size:1.8rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat span{color:var(--mut);font-size:.74rem;text-transform:uppercase;letter-spacing:.06em}
+.note{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--warn);padding:1rem 1.15rem}
+h2{font-size:1rem;text-transform:uppercase;letter-spacing:.08em;margin:0 0 .5rem;padding-bottom:.35rem;border-bottom:1px solid var(--line)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,monospace}
+th{text-align:left;color:var(--mut);font-weight:400;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;padding:.3rem .5rem;border-bottom:1px solid var(--line)}
+td{padding:.26rem .5rem;border-bottom:1px solid var(--line)}
+td.n{text-align:right;font-variant-numeric:tabular-nums;color:var(--mut)}
+tr:hover td{background:rgba(127,127,127,.07)}
+tr.done td{opacity:.45}
+.mk{color:var(--hk);font-size:.7rem;letter-spacing:.05em} .mk.uk{color:var(--uk)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(21rem,1fr));gap:2rem}
+</style>
+<div class=wrap>
+<header><h1>The Favourites Gap</h1>
+<p class=sub>Hong Kong and UK merchants that appear in wine-searcher's wide query but not in Ken's favourites list. Corrected 2026-08-31.</p></header>
+<div class=stats>
+<div class=stat><b>55</b><span>on the list</span></div>
+<div class=stat><b>255</b><span>missing</span></div>
+<div class=stat><b>119</b><span>new since the first list</span></div>
+<div class=stat><b>113 / 142</b><span>HK / UK</span></div>
+</div>
+<div class=note><strong>The first list of 136 was too short.</strong> It classified a capture as
+&ldquo;favourites&rdquo; from its filename. Files in <code>Downloads</code> and the
+<code>_backfill</code> archive carry that name but contain foreign offers &mdash; which a favourites
+page cannot &mdash; so they are wide captures saved without the <code>w</code> suffix. They made 91
+merchants look favourited when they are not. The corrected test: a capture counts as favourites only
+if <em>every</em> offer on it is HK or UK. That yields <strong>55</strong> favourited merchants,
+matching Ken&rsquo;s own count of &ldquo;more in the 50s&rdquo;.
+<br><br>The 136 you have are all genuinely missing &mdash; they are a subset. There are
+<strong>119 more</strong>, and the biggest single omission is <strong>Y18 Elegant Spirits</strong>,
+seen on 706 cells and holding the cheapest HK/UK offer on 93 of them.</div>
+<section><h2>⛔ Not on your list of 136 &mdash; 119 to add</h2><div class=scroll><table>
+<thead><tr><th>#</th><th>Merchant</th><th>Cells</th><th>Cheapest</th></tr></thead><tbody>
+<tr><td class=n>1</td><td><span class=mk>HK</span> Y18 Elegant Spirits Ltd.</td><td class=n>706</td><td class=n>93</td></tr>
+<tr><td class=n>2</td><td><span class=mk uk>UK</span> Cru World Wine - UK</td><td class=n>414</td><td class=n>24</td></tr>
+<tr><td class=n>3</td><td><span class=mk uk>UK</span> Bordeaux Index, Fine Wine &amp; Spirits - LiveTrade</td><td class=n>274</td><td class=n>28</td></tr>
+<tr><td class=n>4</td><td><span class=mk uk>UK</span> Goedhuis Waddesdon</td><td class=n>87</td><td class=n>45</td></tr>
+<tr><td class=n>5</td><td><span class=mk uk>UK</span> CultX</td><td class=n>85</td><td class=n>6</td></tr>
+<tr><td class=n>6</td><td><span class=mk uk>UK</span> Corney &amp; Barrow</td><td class=n>79</td><td class=n>47</td></tr>
+<tr><td class=n>7</td><td><span class=mk uk>UK</span> CRS Fine Wines</td><td class=n>74</td><td class=n>12</td></tr>
+<tr><td class=n>8</td><td><span class=mk>HK</span> Altaya Wines</td><td class=n>60</td><td class=n>6</td></tr>
+<tr><td class=n>9</td><td><span class=mk uk>UK</span> Four Walls Wine Company</td><td class=n>37</td><td class=n>17</td></tr>
+<tr><td class=n>10</td><td><span class=mk>HK</span> Ginsberg+Chan Wine Merchants Asia</td><td class=n>35</td><td class=n>1</td></tr>
+<tr><td class=n>11</td><td><span class=mk uk>UK</span> Millesima - UK</td><td class=n>35</td><td class=n>3</td></tr>
+<tr><td class=n>12</td><td><span class=mk uk>UK</span> Berry Bros. &amp; Rudd</td><td class=n>33</td><td class=n>17</td></tr>
+<tr><td class=n>13</td><td><span class=mk>HK</span> A.C. Wine Management Ltd</td><td class=n>31</td><td class=n>8</td></tr>
+<tr><td class=n>14</td><td><span class=mk>HK</span> A Plus Wine Cellar Co Ltd</td><td class=n>29</td><td class=n>10</td></tr>
+<tr><td class=n>15</td><td><span class=mk uk>UK</span> Brunswick Fine Wines &amp; Spirits Ltd</td><td class=n>29</td><td class=n>4</td></tr>
+<tr><td class=n>16</td><td><span class=mk uk>UK</span> Appellations Ltd.</td><td class=n>27</td><td class=n></td></tr>
+<tr><td class=n>17</td><td><span class=mk uk>UK</span> Flint Broking</td><td class=n>27</td><td class=n>20</td></tr>
+<tr><td class=n>18</td><td><span class=mk uk>UK</span> Hedonism Wines</td><td class=n>27</td><td class=n>1</td></tr>
+<tr><td class=n>19</td><td><span class=mk uk>UK</span> Albany Vintners</td><td class=n>26</td><td class=n>6</td></tr>
+<tr><td class=n>20</td><td><span class=mk uk>UK</span> Farthinghoe Fine Wine Ltd</td><td class=n>26</td><td class=n>9</td></tr>
+<tr><td class=n>21</td><td><span class=mk>HK</span> Meta Wine Cellar</td><td class=n>26</td><td class=n>8</td></tr>
+<tr><td class=n>22</td><td><span class=mk>HK</span> HK Online Wine Shop Limited</td><td class=n>25</td><td class=n></td></tr>
+<tr><td class=n>23</td><td><span class=mk uk>UK</span> Chelsea Vintners Ltd, London</td><td class=n>24</td><td class=n>7</td></tr>
+<tr><td class=n>24</td><td><span class=mk uk>UK</span> Naultia Wines UK</td><td class=n>22</td><td class=n>5</td></tr>
+<tr><td class=n>25</td><td><span class=mk uk>UK</span> Cuchet &amp; Co Wines</td><td class=n>21</td><td class=n>18</td></tr>
+<tr><td class=n>26</td><td><span class=mk uk>UK</span> BordeauXchange</td><td class=n>20</td><td class=n>4</td></tr>
+<tr><td class=n>27</td><td><span class=mk uk>UK</span> Fine Wine Cellar</td><td class=n>20</td><td class=n></td></tr>
+<tr><td class=n>28</td><td><span class=mk uk>UK</span> Wilkinson Vintners</td><td class=n>20</td><td class=n>3</td></tr>
+<tr><td class=n>29</td><td><span class=mk>HK</span> Sotheby&#x27;s Wine Hong Kong, Retail</td><td class=n>19</td><td class=n>6</td></tr>
+<tr><td class=n>30</td><td><span class=mk>HK</span> YIXI WINE</td><td class=n>19</td><td class=n>9</td></tr>
+<tr><td class=n>31</td><td><span class=mk>HK</span> Vynluna Wines</td><td class=n>18</td><td class=n></td></tr>
+<tr><td class=n>32</td><td><span class=mk uk>UK</span> IDealwine UK - Retail</td><td class=n>17</td><td class=n></td></tr>
+<tr><td class=n>33</td><td><span class=mk uk>UK</span> Cellar Advisor</td><td class=n>16</td><td class=n>20</td></tr>
+<tr><td class=n>34</td><td><span class=mk>HK</span> Cote d&#x27;Or Fine Wine Merchants</td><td class=n>14</td><td class=n>10</td></tr>
+<tr><td class=n>35</td><td><span class=mk>HK</span> East Power Vins Limited</td><td class=n>14</td><td class=n></td></tr>
+<tr><td class=n>36</td><td><span class=mk>HK</span> The Wine Shop Limited</td><td class=n>14</td><td class=n>2</td></tr>
+<tr><td class=n>37</td><td><span class=mk uk>UK</span> Turville Valley Wines</td><td class=n>14</td><td class=n>9</td></tr>
+<tr><td class=n>38</td><td><span class=mk>HK</span> Vinsionaire</td><td class=n>14</td><td class=n>1</td></tr>
+<tr><td class=n>39</td><td><span class=mk>HK</span> WA Investment Limited</td><td class=n>14</td><td class=n></td></tr>
+<tr><td class=n>40</td><td><span class=mk uk>UK</span> L&#x27;Assemblage</td><td class=n>13</td><td class=n>5</td></tr>
+<tr><td class=n>41</td><td><span class=mk>HK</span> RFW Hong Kong</td><td class=n>13</td><td class=n>4</td></tr>
+<tr><td class=n>42</td><td><span class=mk uk>UK</span> Robert Rolls &amp; Co.</td><td class=n>13</td><td class=n>4</td></tr>
+<tr><td class=n>43</td><td><span class=mk uk>UK</span> Morgan Classic Wines</td><td class=n>12</td><td class=n>9</td></tr>
+<tr><td class=n>44</td><td><span class=mk uk>UK</span> Cru Wine</td><td class=n>11</td><td class=n></td></tr>
+<tr><td class=n>45</td><td><span class=mk>HK</span> Jubilation International</td><td class=n>11</td><td class=n>1</td></tr>
+<tr><td class=n>46</td><td><span class=mk uk>UK</span> Mann Fine Wine</td><td class=n>11</td><td class=n>3</td></tr>
+<tr><td class=n>47</td><td><span class=mk uk>UK</span> Renaissance Vintners</td><td class=n>11</td><td class=n></td></tr>
+<tr><td class=n>48</td><td><span class=mk>HK</span> Solomon Vintners</td><td class=n>11</td><td class=n>4</td></tr>
+<tr><td class=n>49</td><td><span class=mk uk>UK</span> Averys Wine Merchants</td><td class=n>10</td><td class=n>3</td></tr>
+<tr><td class=n>50</td><td><span class=mk>HK</span> RNG WINE Ltd</td><td class=n>9</td><td class=n>3</td></tr>
+<tr><td class=n>51</td><td><span class=mk>HK</span> Burgundy Cave</td><td class=n>8</td><td class=n>5</td></tr>
+<tr><td class=n>52</td><td><span class=mk>HK</span> J&amp;W Fine Wines Limited</td><td class=n>8</td><td class=n>8</td></tr>
+<tr><td class=n>53</td><td><span class=mk uk>UK</span> LJK Wine Ltd</td><td class=n>8</td><td class=n></td></tr>
+<tr><td class=n>54</td><td><span class=mk>HK</span> Medoc Fine Wine LTD</td><td class=n>8</td><td class=n></td></tr>
+<tr><td class=n>55</td><td><span class=mk uk>UK</span> Bordeaux Index, Fine Wine &amp; Spirits</td><td class=n>7</td><td class=n></td></tr>
+<tr><td class=n>56</td><td><span class=mk>HK</span> King&#x27;s Wine Cellar</td><td class=n>7</td><td class=n>1</td></tr>
+<tr><td class=n>57</td><td><span class=mk>HK</span> PJF Wines (HK) Limited</td><td class=n>7</td><td class=n>2</td></tr>
+<tr><td class=n>58</td><td><span class=mk uk>UK</span> Woodwinters Wines and Whiskies</td><td class=n>7</td><td class=n>2</td></tr>
+<tr><td class=n>59</td><td><span class=mk uk>UK</span> Acker UK</td><td class=n>6</td><td class=n>5</td></tr>
+<tr><td class=n>60</td><td><span class=mk>HK</span> Superb Wine Company</td><td class=n>6</td><td class=n></td></tr>
+<tr><td class=n>61</td><td><span class=mk>HK</span> Vinottle Wines Limited</td><td class=n>6</td><td class=n>1</td></tr>
+<tr><td class=n>62</td><td><span class=mk uk>UK</span> Waud Handford Wine Merchant</td><td class=n>6</td><td class=n></td></tr>
+<tr><td class=n>63</td><td><span class=mk uk>UK</span> Abingdon Fine Wine</td><td class=n>5</td><td class=n></td></tr>
+<tr><td class=n>64</td><td><span class=mk uk>UK</span> Bordeaux Vintners Ltd</td><td class=n>5</td><td class=n>5</td></tr>
+<tr><td class=n>65</td><td><span class=mk>HK</span> Cuvees.com</td><td class=n>5</td><td class=n>4</td></tr>
+<tr><td class=n>66</td><td><span class=mk>HK</span> Harbour Wines Holding</td><td class=n>5</td><td class=n>6</td></tr>
+<tr><td class=n>67</td><td><span class=mk>HK</span> Ponti Wine Cellars (Hong Kong)</td><td class=n>5</td><td class=n>2</td></tr>
+<tr><td class=n>68</td><td><span class=mk uk>UK</span> Sell My Wine</td><td class=n>5</td><td class=n>1</td></tr>
+<tr><td class=n>69</td><td><span class=mk uk>UK</span> Squelch Wine Marketplace</td><td class=n>5</td><td class=n>6</td></tr>
+<tr><td class=n>70</td><td><span class=mk>HK</span> Wine Revolution</td><td class=n>5</td><td class=n></td></tr>
+<tr><td class=n>71</td><td><span class=mk uk>UK</span> BiBO</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>72</td><td><span class=mk uk>UK</span> Bottle Apostle</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>73</td><td><span class=mk uk>UK</span> Cellar Select UK</td><td class=n>4</td><td class=n>3</td></tr>
+<tr><td class=n>74</td><td><span class=mk uk>UK</span> Clarion Wines Ltd</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>75</td><td><span class=mk>HK</span> Convergence Wealthy (HK) Co Limited</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>76</td><td><span class=mk>HK</span> MyiCellar</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>77</td><td><span class=mk>HK</span> VINO HK</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>78</td><td><span class=mk>HK</span> Wine1000plus</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>79</td><td><span class=mk uk>UK</span> Bon Coeur Fine Wines</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>80</td><td><span class=mk uk>UK</span> Bond Street Wine</td><td class=n>3</td><td class=n>2</td></tr>
+<tr><td class=n>81</td><td><span class=mk>HK</span> FineWineChina</td><td class=n>3</td><td class=n>7</td></tr>
+<tr><td class=n>82</td><td><span class=mk>HK</span> Remfly Hong Kong Limited</td><td class=n>3</td><td class=n>5</td></tr>
+<tr><td class=n>83</td><td><span class=mk uk>UK</span> ShoppingWines.com</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>84</td><td><span class=mk uk>UK</span> The Oxford Wine Company</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>85</td><td><span class=mk>HK</span> The Vintage Wine Club Hong Kong</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>86</td><td><span class=mk>HK</span> 109 Wine Ltd.</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>87</td><td><span class=mk uk>UK</span> ASB Wines</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>88</td><td><span class=mk>HK</span> Beaqua Wines and Spirits Company Limited</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>89</td><td><span class=mk uk>UK</span> Burns &amp; German Vintners Ltd</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>90</td><td><span class=mk>HK</span> Douglas BCA Ltd.</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>91</td><td><span class=mk>HK</span> Kerry Wines</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>92</td><td><span class=mk uk>UK</span> Noble Rot Fine Wine Ltd</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>93</td><td><span class=mk>HK</span> Premier Fine Wine</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>94</td><td><span class=mk uk>UK</span> Ripley Wines</td><td class=n>2</td><td class=n>3</td></tr>
+<tr><td class=n>95</td><td><span class=mk>HK</span> The Vine Gallery</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>96</td><td><span class=mk uk>UK</span> 92 Or More</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>97</td><td><span class=mk uk>UK</span> Cambridge Wine Merchants</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>98</td><td><span class=mk uk>UK</span> City Wine Collection</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>99</td><td><span class=mk>HK</span> Classy Wine Cellar</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>100</td><td><span class=mk uk>UK</span> Dalla Terra Enoteca</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>101</td><td><span class=mk uk>UK</span> Fortnum &amp; Mason</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>102</td><td><span class=mk>HK</span> JOIE(HK)</td><td class=n>1</td><td class=n>1</td></tr>
+<tr><td class=n>103</td><td><span class=mk>HK</span> Just Fine Winery Limited</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>104</td><td><span class=mk uk>UK</span> Mumbles Fine Wines</td><td class=n>1</td><td class=n>1</td></tr>
+<tr><td class=n>105</td><td><span class=mk>HK</span> My Wine Man</td><td class=n>1</td><td class=n>2</td></tr>
+<tr><td class=n>106</td><td><span class=mk>HK</span> N&amp;C Wine</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>107</td><td><span class=mk>HK</span> Opak Cellar Limited</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>108</td><td><span class=mk uk>UK</span> Palmers Wine Store</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>109</td><td><span class=mk>HK</span> Per Vinum</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>110</td><td><span class=mk>HK</span> Rotall Trading HK</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>111</td><td><span class=mk>HK</span> TenCellars</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>112</td><td><span class=mk uk>UK</span> The Solent Cellar</td><td class=n>1</td><td class=n>2</td></tr>
+<tr><td class=n>113</td><td><span class=mk uk>UK</span> WINE SHOP-UK</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>114</td><td><span class=mk>HK</span> Wine Casa HK</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>115</td><td><span class=mk>HK</span> Wine Walker Ltd.</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>116</td><td><span class=mk>HK</span> Yipin Wine</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>117</td><td><span class=mk uk>UK</span> York Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>118</td><td><span class=mk uk>UK</span> de Burgh Wine Merchants</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>119</td><td><span class=mk uk>UK</span> winedirect</td><td class=n>1</td><td class=n></td></tr></tbody></table></div></section>
+<div class=cols>
+<section><h2>Already on your 136 &mdash; 136</h2><div class=scroll><table>
+<thead><tr><th>#</th><th>Merchant</th><th>Cells</th><th>Cheapest</th></tr></thead><tbody>
+<tr><td class=n>1</td><td><span class=mk uk>UK</span> In Vino Veritas UK</td><td class=n>84</td><td class=n>28</td></tr>
+<tr><td class=n>2</td><td><span class=mk uk>UK</span> Crop &amp; Vine</td><td class=n>81</td><td class=n></td></tr>
+<tr><td class=n>3</td><td><span class=mk>HK</span> Acker Merrall &amp; Condit HK Retail</td><td class=n>25</td><td class=n>18</td></tr>
+<tr><td class=n>4</td><td><span class=mk uk>UK</span> Nemo Wine Cellars</td><td class=n>23</td><td class=n></td></tr>
+<tr><td class=n>5</td><td><span class=mk>HK</span> Grand Cru Cellar Intl Ltd Wholesale</td><td class=n>21</td><td class=n></td></tr>
+<tr><td class=n>6</td><td><span class=mk>HK</span> Regis Wine Ltd</td><td class=n>20</td><td class=n></td></tr>
+<tr><td class=n>7</td><td><span class=mk>HK</span> GrapenGrain</td><td class=n>17</td><td class=n>1</td></tr>
+<tr><td class=n>8</td><td><span class=mk>HK</span> DFV FINE WINES LTD</td><td class=n>14</td><td class=n>3</td></tr>
+<tr><td class=n>9</td><td><span class=mk>HK</span> Yuan Jing Holding Ltd</td><td class=n>14</td><td class=n>2</td></tr>
+<tr><td class=n>10</td><td><span class=mk>HK</span> Wine Buff Fine Wines</td><td class=n>13</td><td class=n></td></tr>
+<tr><td class=n>11</td><td><span class=mk uk>UK</span> Falcon Vintners</td><td class=n>11</td><td class=n></td></tr>
+<tr><td class=n>12</td><td><span class=mk>HK</span> Lyndhurst Wine</td><td class=n>11</td><td class=n>3</td></tr>
+<tr><td class=n>13</td><td><span class=mk uk>UK</span> Wine.ua</td><td class=n>11</td><td class=n>9</td></tr>
+<tr><td class=n>14</td><td><span class=mk uk>UK</span> Fine Wine Direct Limited</td><td class=n>10</td><td class=n></td></tr>
+<tr><td class=n>15</td><td><span class=mk>HK</span> Good Wine HK</td><td class=n>10</td><td class=n>5</td></tr>
+<tr><td class=n>16</td><td><span class=mk uk>UK</span> Atlas Fine Wines</td><td class=n>9</td><td class=n>3</td></tr>
+<tr><td class=n>17</td><td><span class=mk uk>UK</span> Goodwine.ua</td><td class=n>9</td><td class=n></td></tr>
+<tr><td class=n>18</td><td><span class=mk>HK</span> OMY Cellar</td><td class=n>9</td><td class=n></td></tr>
+<tr><td class=n>19</td><td><span class=mk uk>UK</span> Savea Merchants</td><td class=n>9</td><td class=n></td></tr>
+<tr><td class=n>20</td><td><span class=mk>HK</span> Vino Social Club Asia</td><td class=n>9</td><td class=n>2</td></tr>
+<tr><td class=n>21</td><td><span class=mk uk>UK</span> Vinovest</td><td class=n>9</td><td class=n></td></tr>
+<tr><td class=n>22</td><td><span class=mk>HK</span> WineFinely</td><td class=n>9</td><td class=n></td></tr>
+<tr><td class=n>23</td><td><span class=mk>HK</span> Wineworld Hong Kong</td><td class=n>9</td><td class=n></td></tr>
+<tr><td class=n>24</td><td><span class=mk uk>UK</span> Armit Wines</td><td class=n>8</td><td class=n>7</td></tr>
+<tr><td class=n>25</td><td><span class=mk>HK</span> Bordeaux Index, Fine Wine &amp; Spirits - Hong Kong</td><td class=n>7</td><td class=n></td></tr>
+<tr><td class=n>26</td><td><span class=mk uk>UK</span> Claret-e</td><td class=n>7</td><td class=n>4</td></tr>
+<tr><td class=n>27</td><td><span class=mk uk>UK</span> Honest Grapes</td><td class=n>7</td><td class=n></td></tr>
+<tr><td class=n>28</td><td><span class=mk uk>UK</span> Laithwaites</td><td class=n>7</td><td class=n></td></tr>
+<tr><td class=n>29</td><td><span class=mk>HK</span> V Wine - Hong Kong</td><td class=n>7</td><td class=n></td></tr>
+<tr><td class=n>30</td><td><span class=mk uk>UK</span> Waud Investment Wines</td><td class=n>7</td><td class=n>6</td></tr>
+<tr><td class=n>31</td><td><span class=mk uk>UK</span> Asset Wines</td><td class=n>6</td><td class=n>3</td></tr>
+<tr><td class=n>32</td><td><span class=mk uk>UK</span> Bentley&#x27;s Wine Merchants of Ludlow</td><td class=n>6</td><td class=n>1</td></tr>
+<tr><td class=n>33</td><td><span class=mk>HK</span> Hong Kong Wine Ltd</td><td class=n>6</td><td class=n>4</td></tr>
+<tr><td class=n>34</td><td><span class=mk>HK</span> Moon Wine Trading Company</td><td class=n>6</td><td class=n></td></tr>
+<tr><td class=n>35</td><td><span class=mk uk>UK</span> Rare Wine Vintages</td><td class=n>6</td><td class=n>12</td></tr>
+<tr><td class=n>36</td><td><span class=mk>HK</span> Rendezvous Wine Cellar</td><td class=n>6</td><td class=n>1</td></tr>
+<tr><td class=n>37</td><td><span class=mk uk>UK</span> Vinco Fine Wines</td><td class=n>6</td><td class=n>2</td></tr>
+<tr><td class=n>38</td><td><span class=mk>HK</span> Vinterra Wines</td><td class=n>6</td><td class=n>1</td></tr>
+<tr><td class=n>39</td><td><span class=mk>HK</span> CBT Wines Company Limited</td><td class=n>5</td><td class=n>2</td></tr>
+<tr><td class=n>40</td><td><span class=mk>HK</span> Chateau Cru Wine Shop</td><td class=n>5</td><td class=n>1</td></tr>
+<tr><td class=n>41</td><td><span class=mk uk>UK</span> Davis Bell McCraith Wines</td><td class=n>5</td><td class=n>3</td></tr>
+<tr><td class=n>42</td><td><span class=mk>HK</span> Fortune Fountain Wines &amp; Spirits</td><td class=n>5</td><td class=n></td></tr>
+<tr><td class=n>43</td><td><span class=mk uk>UK</span> GV Wine Merchants</td><td class=n>5</td><td class=n>1</td></tr>
+<tr><td class=n>44</td><td><span class=mk>HK</span> HONG KONG WINE &amp; SPIRITS EXCHANGE CO., LTD.</td><td class=n>5</td><td class=n></td></tr>
+<tr><td class=n>45</td><td><span class=mk uk>UK</span> Lady Wine Limited</td><td class=n>5</td><td class=n>2</td></tr>
+<tr><td class=n>46</td><td><span class=mk uk>UK</span> Lea &amp; Sandeman</td><td class=n>5</td><td class=n></td></tr>
+<tr><td class=n>47</td><td><span class=mk uk>UK</span> Private Cellar Fine Wines</td><td class=n>5</td><td class=n></td></tr>
+<tr><td class=n>48</td><td><span class=mk>HK</span> Solera Fine Wine Fines &amp; Spirits</td><td class=n>5</td><td class=n>1</td></tr>
+<tr><td class=n>49</td><td><span class=mk uk>UK</span> The Winery UK Ltd</td><td class=n>5</td><td class=n>2</td></tr>
+<tr><td class=n>50</td><td><span class=mk uk>UK</span> BBC Good Food Wine Club</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>51</td><td><span class=mk uk>UK</span> Decorum Vintners</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>52</td><td><span class=mk uk>UK</span> Drinks Direct</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>53</td><td><span class=mk uk>UK</span> Fine Wines for All Limited</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>54</td><td><span class=mk>HK</span> Great Ocean Industrial Ltd</td><td class=n>4</td><td class=n>2</td></tr>
+<tr><td class=n>55</td><td><span class=mk uk>UK</span> Hand Picked Burgundy</td><td class=n>4</td><td class=n>1</td></tr>
+<tr><td class=n>56</td><td><span class=mk uk>UK</span> Martinez Wines</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>57</td><td><span class=mk>HK</span> MingWo Fine Wines</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>58</td><td><span class=mk uk>UK</span> Salusbury Winestore</td><td class=n>4</td><td class=n>2</td></tr>
+<tr><td class=n>59</td><td><span class=mk uk>UK</span> Tanners Wine Merchants</td><td class=n>4</td><td class=n>2</td></tr>
+<tr><td class=n>60</td><td><span class=mk uk>UK</span> The Wine Rooms Cambridge</td><td class=n>4</td><td class=n></td></tr>
+<tr><td class=n>61</td><td><span class=mk>HK</span> Wine Direct Hong Kong</td><td class=n>4</td><td class=n>1</td></tr>
+<tr><td class=n>62</td><td><span class=mk uk>UK</span> Wright Wine Company</td><td class=n>4</td><td class=n>1</td></tr>
+<tr><td class=n>63</td><td><span class=mk>HK</span> (All) About Burg</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>64</td><td><span class=mk>HK</span> Find Somm Wine</td><td class=n>3</td><td class=n>3</td></tr>
+<tr><td class=n>65</td><td><span class=mk>HK</span> Fremantle International Ltd.</td><td class=n>3</td><td class=n>1</td></tr>
+<tr><td class=n>66</td><td><span class=mk uk>UK</span> Gunson Fine Wines Limited</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>67</td><td><span class=mk>HK</span> Leader Wine Company</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>68</td><td><span class=mk uk>UK</span> London End Wines</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>69</td><td><span class=mk>HK</span> MONTY MONTÉE</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>70</td><td><span class=mk>HK</span> Madison Wine</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>71</td><td><span class=mk uk>UK</span> Matteo Lupi Wines Ltd</td><td class=n>3</td><td class=n>2</td></tr>
+<tr><td class=n>72</td><td><span class=mk>HK</span> Newfame (H.K) Limited</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>73</td><td><span class=mk>HK</span> Victoria Wine Cellar Ltd.</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>74</td><td><span class=mk>HK</span> Vine Wine Ltd</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>75</td><td><span class=mk>HK</span> W Cellar Limited</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>76</td><td><span class=mk uk>UK</span> Wineye.com</td><td class=n>3</td><td class=n></td></tr>
+<tr><td class=n>77</td><td><span class=mk>HK</span> Asia Pacific International</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>78</td><td><span class=mk uk>UK</span> Baron Wines</td><td class=n>2</td><td class=n>1</td></tr>
+<tr><td class=n>79</td><td><span class=mk uk>UK</span> Bushby Fine Wines</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>80</td><td><span class=mk uk>UK</span> Cellar Key Ltd</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>81</td><td><span class=mk uk>UK</span> Davy&#x27;s Wine Merchants</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>82</td><td><span class=mk>HK</span> Grand Glory</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>83</td><td><span class=mk uk>UK</span> Great Wines Direct</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>84</td><td><span class=mk uk>UK</span> Haynes, Hanson &amp; Clark</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>85</td><td><span class=mk uk>UK</span> Michael Morgan Fine Wine Services</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>86</td><td><span class=mk uk>UK</span> North Norfolk Cellars</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>87</td><td><span class=mk uk>UK</span> Page 32 Fine Wines &amp; Spirits Ltd</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>88</td><td><span class=mk>HK</span> Red Wine Cellar Ltd</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>89</td><td><span class=mk uk>UK</span> Sélection Sommelier UK</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>90</td><td><span class=mk uk>UK</span> The Finest Bubble</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>91</td><td><span class=mk uk>UK</span> Vinatis UK</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>92</td><td><span class=mk>HK</span> Vinternet (HK) International Trading Co.</td><td class=n>2</td><td class=n></td></tr>
+<tr><td class=n>93</td><td><span class=mk uk>UK</span> 1823 Celllar by Randalls</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>94</td><td><span class=mk uk>UK</span> Barber Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>95</td><td><span class=mk uk>UK</span> Bowes Wine Ltd</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>96</td><td><span class=mk>HK</span> CN CELLAR LIMITED</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>97</td><td><span class=mk uk>UK</span> Callmewine UK</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>98</td><td><span class=mk>HK</span> Cave Cru</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>99</td><td><span class=mk>HK</span> Classy Wines Limited</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>100</td><td><span class=mk uk>UK</span> Ellis Wharton Wines Ltd.</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>101</td><td><span class=mk uk>UK</span> Fareham Wine Cellar</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>102</td><td><span class=mk>HK</span> Grand Cru, Wine Concierge - Hong Kong</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>103</td><td><span class=mk>HK</span> HannaY Wine</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>104</td><td><span class=mk uk>UK</span> Hennings Wine Merchants</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>105</td><td><span class=mk uk>UK</span> Holy Spirits</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>106</td><td><span class=mk uk>UK</span> House of Townend</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>107</td><td><span class=mk uk>UK</span> Jerome&#x27;s Wine Bar &amp; Shop</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>108</td><td><span class=mk>HK</span> LVJ Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>109</td><td><span class=mk>HK</span> Leighton wine</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>110</td><td><span class=mk>HK</span> Metropolitan Wine Cellar Limited</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>111</td><td><span class=mk>HK</span> OKiBook</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>112</td><td><span class=mk>HK</span> ORD Fine Wines Group</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>113</td><td><span class=mk uk>UK</span> Primitus Fine Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>114</td><td><span class=mk>HK</span> Rare Wine HK</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>115</td><td><span class=mk>HK</span> Rotamagus Wines Ltd</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>116</td><td><span class=mk uk>UK</span> Sandhams Wine Merchants</td><td class=n>1</td><td class=n>3</td></tr>
+<tr><td class=n>117</td><td><span class=mk uk>UK</span> Sip Wines Shop</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>118</td><td><span class=mk uk>UK</span> Sommelier&#x27;s Choice</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>119</td><td><span class=mk>HK</span> Somms in da hood</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>120</td><td><span class=mk uk>UK</span> South Downs Cellars</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>121</td><td><span class=mk uk>UK</span> St Andrews Wine Company</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>122</td><td><span class=mk uk>UK</span> T. Wright Wine</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>123</td><td><span class=mk uk>UK</span> Ten Acre Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>124</td><td><span class=mk uk>UK</span> The Imperial Wine Company</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>125</td><td><span class=mk uk>UK</span> The Sourcing Table</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>126</td><td><span class=mk uk>UK</span> The Sunday Times Wine Club</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>127</td><td><span class=mk uk>UK</span> The Whisky Exchange</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>128</td><td><span class=mk uk>UK</span> The Wine Twit Ltd</td><td class=n>1</td><td class=n>3</td></tr>
+<tr><td class=n>129</td><td><span class=mk uk>UK</span> Turner and Jones Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>130</td><td><span class=mk uk>UK</span> VinQuinn Ltd</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>131</td><td><span class=mk>HK</span> Wine &amp; Oenophiliacs</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>132</td><td><span class=mk>HK</span> WineHK</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>133</td><td><span class=mk uk>UK</span> Worsley Wines</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>134</td><td><span class=mk>HK</span> Xtrawine HK LTD</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>135</td><td><span class=mk uk>UK</span> xtraWine UK Ltd.-London</td><td class=n>1</td><td class=n></td></tr>
+<tr><td class=n>136</td><td><span class=mk>HK</span> Ô Muse de Bordeaux</td><td class=n>1</td><td class=n></td></tr></tbody></table></div></section>
+<section><h2>The 55 you already have</h2><div class=scroll><table>
+<thead><tr><th>#</th><th>Merchant</th></tr></thead><tbody>
+<tr><td class=n>1</td><td>Avint-Garde Fine Wine</td></tr><tr><td class=n>2</td><td>BBX Berry Bros. &amp; Rudd&#x27;s Fine Wine Exchange</td></tr><tr><td class=n>3</td><td>Bordeaux Index - LiveTrade - Hong Kong</td></tr><tr><td class=n>4</td><td>CHW Cellars</td></tr><tr><td class=n>5</td><td>Capital Vintners</td></tr><tr><td class=n>6</td><td>Cavissima Hong Kong</td></tr><tr><td class=n>7</td><td>Christopher Keiller - Fine Wine Services</td></tr><tr><td class=n>8</td><td>Citicellar</td></tr><tr><td class=n>9</td><td>Corney &amp; Barrow - Hong Kong</td></tr><tr><td class=n>10</td><td>Crop &amp; Vine - HK</td></tr><tr><td class=n>11</td><td>Crown Wine Cellars Limited</td></tr><tr><td class=n>12</td><td>Cru World Wine - Hong Kong</td></tr><tr><td class=n>13</td><td>CultX HK</td></tr><tr><td class=n>14</td><td>FINE+RARE Wines</td></tr><tr><td class=n>15</td><td>Farr Vintners</td></tr><tr><td class=n>16</td><td>Frenchwines.hk</td></tr><tr><td class=n>17</td><td>Ganpei Vintners Limited</td></tr><tr><td class=n>18</td><td>Goedhuis &amp; Co. Hong Kong</td></tr><tr><td class=n>19</td><td>Hatton &amp; Edwards</td></tr><tr><td class=n>20</td><td>Hong Kong Wine Vault</td></tr><tr><td class=n>21</td><td>IDealwine Hong Kong - Retail</td></tr><tr><td class=n>22</td><td>Ideal Wine Company</td></tr><tr><td class=n>23</td><td>Jeroboams</td></tr><tr><td class=n>24</td><td>Justerini &amp; Brooks</td></tr><tr><td class=n>25</td><td>LW Trading</td></tr><tr><td class=n>26</td><td>Latimer Vintners Ltd.</td></tr><tr><td class=n>27</td><td>Lay &amp; Wheeler Wine Merchants</td></tr><tr><td class=n>28</td><td>Liquid Collection Limited</td></tr><tr><td class=n>29</td><td>MRM Wine Investments</td></tr><tr><td class=n>30</td><td>Marlo Wine</td></tr><tr><td class=n>31</td><td>Millesima - Hong Kong</td></tr><tr><td class=n>32</td><td>Ming Wines</td></tr><tr><td class=n>33</td><td>Nickolls and Perks</td></tr><tr><td class=n>34</td><td>Omtis Fine Wines</td></tr><tr><td class=n>35</td><td>Richard Kihl Ltd.</td></tr><tr><td class=n>36</td><td>Seckford Wines</td></tr><tr><td class=n>37</td><td>Skysun Wines Investment Company Limited</td></tr><tr><td class=n>38</td><td>Sovy</td></tr><tr><td class=n>39</td><td>Supreme Only</td></tr><tr><td class=n>40</td><td>The Fine Wine Experience</td></tr><tr><td class=n>41</td><td>The Fine Wine PA</td></tr><tr><td class=n>42</td><td>The Wine Cave Co. Ltd.</td></tr><tr><td class=n>43</td><td>Two More Glasses - Hong Kong</td></tr><tr><td class=n>44</td><td>Uncorked Ltd</td></tr><tr><td class=n>45</td><td>VinoBuzz</td></tr><tr><td class=n>46</td><td>Vintage Grand Cru</td></tr><tr><td class=n>47</td><td>Vintage Investments Limited</td></tr><tr><td class=n>48</td><td>Vinum Fine Wines - London</td></tr><tr><td class=n>49</td><td>Wine Lyrics Limited</td></tr><tr><td class=n>50</td><td>Wine Thief</td></tr><tr><td class=n>51</td><td>WineBourse</td></tr><tr><td class=n>52</td><td>Winecollector.com</td></tr><tr><td class=n>53</td><td>Winetian</td></tr><tr><td class=n>54</td><td>Wineview</td></tr><tr><td class=n>55</td><td>Y18 Global Offer</td></tr>
+</tbody></table></div>
+<p class=sub style="font-size:.85rem">If wine-searcher caps the list, adding the top 80 of the 255 covers 86% of missed listings; the top 120 covers 93%.</p>
+</section>
+</div>
+</div></body></html>

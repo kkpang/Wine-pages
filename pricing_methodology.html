@@ -1,0 +1,211 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>The Anchor Search</title></head><body><nav aria-label="Wine pages" style="font:14px system-ui;padding:12px 16px;border-bottom:1px solid #ddd;background:#faf7f2;color:#542636"><a style="color:inherit" href="index.html">Cellar dashboard</a> · <a style="color:inherit" href="pages.html">All wine pages</a></nav>
+<style>
+:root{
+  --ink:#1a1c22; --ground:#fbfbfd; --surface:#f2f2f6; --surface2:#e9e9f0;
+  --rule:#d7d7e0; --muted:#6b6d7c; --faint:#9395a3;
+  --anchor:#8a1f3d; --reach:#1d6a63; --warn:#9c5116; --dead:#8b8d99;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ink:#e7e7ee; --ground:#131419; --surface:#1b1c24; --surface2:#23242e;
+    --rule:#31333f; --muted:#9b9daa; --faint:#71737f;
+    --anchor:#e08aa4; --reach:#5cbcae; --warn:#d69456; --dead:#787a86;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#e7e7ee; --ground:#131419; --surface:#1b1c24; --surface2:#23242e;
+  --rule:#31333f; --muted:#9b9daa; --faint:#71737f;
+  --anchor:#e08aa4; --reach:#5cbcae; --warn:#d69456; --dead:#787a86;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  font-size:16.5px; line-height:1.62; margin:0;
+  padding:clamp(1.6rem,5vw,4.5rem) clamp(1.1rem,5vw,2rem) 6rem;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:44rem;margin:0 auto;display:flex;flex-direction:column;gap:2.6rem}
+h1,h2,h3{font-family:ui-serif,Georgia,"Iowan Old Style","Times New Roman",serif;font-weight:600;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.1rem,6vw,3rem);line-height:1.06;letter-spacing:-.02em}
+h2{font-size:1.42rem;line-height:1.2;letter-spacing:-.011em}
+h3{font-size:1.03rem;line-height:1.3}
+p{margin:0}
+a{color:var(--anchor)}
+.eyebrow{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);font-weight:600}
+.lede{font-size:1.12rem;color:var(--muted);text-wrap:pretty}
+.mono{font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+header{display:flex;flex-direction:column;gap:.85rem;padding-bottom:2rem;border-bottom:1px solid var(--rule)}
+section{display:flex;flex-direction:column;gap:1rem}
+.sechead{display:flex;flex-direction:column;gap:.3rem}
+
+/* two-number split */
+.pair{display:grid;grid-template-columns:1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+@media(min-width:34rem){.pair{grid-template-columns:1fr 1fr}}
+.pair>div{background:var(--surface);padding:1.15rem 1.25rem;display:flex;flex-direction:column;gap:.5rem}
+.pair .nm{font-family:ui-serif,Georgia,serif;font-size:1.08rem;font-weight:600}
+.pair .q{font-size:.78rem;color:var(--faint);font-style:italic}
+.pair p{font-size:.93rem;color:var(--muted)}
+
+/* numbered process */
+ol.steps{list-style:none;margin:0;padding:0;counter-reset:s;display:flex;flex-direction:column}
+ol.steps li{position:relative;padding:.72rem 0 .72rem 3.1rem;border-bottom:1px solid var(--rule);font-size:.96rem}
+ol.steps li:first-child{border-top:1px solid var(--rule)}
+ol.steps li::before{
+  counter-increment:s;content:counter(s);position:absolute;left:0;top:.72rem;
+  width:1.9rem;text-align:right;font-family:ui-monospace,Menlo,monospace;
+  font-size:.82rem;color:var(--faint);font-variant-numeric:tabular-nums;
+}
+ol.steps li.sub::before{content:"1a";font-size:.74rem}
+ol.steps li.sub{color:var(--muted);font-size:.9rem}
+ol.steps b{font-weight:600}
+
+/* waterfall cascade */
+.fall{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.fall .row{background:var(--surface);display:grid;grid-template-columns:2.4rem 1fr;gap:.9rem;padding:.85rem 1.1rem;align-items:start}
+.fall .k{font-family:ui-serif,Georgia,serif;font-size:1.15rem;font-weight:600;color:var(--anchor);line-height:1.2}
+.fall .t{font-size:.94rem}
+.fall .t em{color:var(--muted);font-style:normal;display:block;font-size:.85rem;margin-top:.2rem}
+
+/* parameter table */
+.tw{overflow-x:auto;border:1px solid var(--rule);border-radius:3px}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:31rem}
+th,td{text-align:left;padding:.6rem .85rem;border-bottom:1px solid var(--rule)}
+thead th{background:var(--surface2);font-size:.7rem;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tbody tr:last-child td{border-bottom:none}
+td.n{font-family:ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;white-space:nowrap}
+td.why{color:var(--muted);font-size:.85rem}
+
+.note{border-left:2px solid var(--anchor);padding:.25rem 0 .25rem 1rem;color:var(--muted);font-size:.93rem;display:flex;flex-direction:column;gap:.5rem}
+.note b{color:var(--ink);font-weight:600}
+.reach{color:var(--reach);font-weight:600}
+.retired{display:flex;flex-direction:column;gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:3px;overflow:hidden}
+.retired div{background:var(--surface);padding:.7rem 1.05rem;font-size:.89rem;color:var(--muted)}
+.retired s{color:var(--dead);text-decoration-thickness:1px}
+.retired b{color:var(--ink);font-weight:600}
+footer{border-top:1px solid var(--rule);padding-top:1.3rem;color:var(--faint);font-size:.82rem}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">Wine pricing · settled 1 September 2026</div>
+  <h1>The anchor search</h1>
+  <p class="lede">How a wine-searcher offer list becomes the two numbers the cellar and the framework run on — and which offer is allowed to set the price.</p>
+</header>
+
+<section>
+  <div class="sechead"><h2>Two numbers, two questions</h2></div>
+  <div class="pair">
+    <div>
+      <div class="nm">Cheapest&#8209;buyable</div>
+      <div class="q">“What would I pay?”</div>
+      <p>The lowest <b>buyable</b> offer, any format, any size. <b>No corroboration</b> — a listed offer is buyable whether or not a second merchant agrees. <b>By Request is barred</b>: not transactable without an enquiry. Blank if nothing qualifies.</p>
+    </div>
+    <div>
+      <div class="nm">Market value</div>
+      <div class="q">“What is it worth?”</div>
+      <p>The anchor offer plus every offer within ±15% of it, averaged. By Request <b>counts</b> here — a merchant quoting the wine is evidence of what it is worth.</p>
+    </div>
+  </div>
+  <p class="note"><span>Market value below cheapest-buyable is <b>not an error</b>. It means the wine trades cheaper somewhere Ken cannot buy. The gap is information.</span></p>
+
+  <h3>Two tests, and they must not be collapsed</h3>
+  <div class="tw"><table>
+    <thead><tr><th>Test</th><th>Asks</th><th>Passes</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">reachable()</td><td class="why">Is this a wholesale market that tells me what the wine is worth?</td><td>Hong Kong · UK · any designated merchant</td></tr>
+      <tr><td class="mono">buyable()</td><td class="why">Can I execute this today?</td><td><b>HK any offer</b> · <b>UK in-bond or pre-arrival only</b></td></tr>
+    </tbody>
+  </table></div>
+  <p>A UK <b>retail</b> shop can’t ship to Hong Kong, so its price is barred from the buy price — but it is still evidence of what the wine is worth and keeps its place in the market-value pool. It’s a fact about each <i>offer</i>, not the merchant: <b>36 of 156 UK merchants sell both ways</b>.</p>
+  <p class="note"><span><b>“Hong Kong and the UK” is a proxy, not a geography.</b> Every reachability test asks one thing — <i>can Ken buy here, at a wholesale price?</i> Favourite a good wholesale merchant abroad and it must be named in the code’s allow-list in the same breath.</span></p>
+</section>
+
+<section>
+  <div class="sechead"><h2>The sequence</h2>
+  <p class="lede" style="font-size:1rem">One pass over one pool. There are no stages — that scheme was built and replaced the same day.</p></div>
+  <ol class="steps">
+    <li>Load the <b>wide</b> query — every merchant, not just favourited ones.</li>
+    <li class="sub">If the page rendered the 50-offer cap, load the <b>favourites</b> query and union. On <b>96%</b> of capped pages the favourites view holds an offer the wide page never showed.</li>
+    <li>Drop duplicates, merchant families, auctions and <b>junk listings</b>.</li>
+    <li>Cheapest-buyable is the lowest <b>buyable</b> offer.</li>
+    <li>Walk <b>up from the cheapest offer</b>, keeping the lowest <b>corroborated</b> offer of each of four types. Stop early on an HK/UK case.</li>
+    <li>Score each kept offer as <b>price × its type penalty</b>. The <b>lowest score</b> anchors.</li>
+    <li><b>Dead</b> if nothing corroborated, or the anchor exceeds <span class="mono">1.5×</span> the cheapest <i>corroborated</i> offer. Otherwise market value is the mean within ±15%.</li>
+  </ol>
+</section>
+
+<section>
+  <div class="sechead"><h2>The four types of offer</h2>
+  <p class="lede" style="font-size:1rem">This is the heart of it. A penalty is a claim about <b>quality</b>, not price — a loose bottle and a foreign shop each carry risk that a case in Ken’s own market does not, so their price must beat it by the penalty to win.</p></div>
+  <div class="fall">
+    <div class="row"><div class="k">1.00</div><div class="t"><b class="reach">HK/UK case</b><em>The best evidence there is. Half of all anchors.</em></div></div>
+    <div class="row"><div class="k">1.15</div><div class="t"><b class="reach">HK/UK loose</b><em>A single bottle in a market Ken deals in.</em></div></div>
+    <div class="row"><div class="k">1.15</div><div class="t">foreign case<em>Rare — 1.7% of anchors.</em></div></div>
+    <div class="row"><div class="k">1.30</div><div class="t">foreign loose<em>Two-thirds of the foreign book is retail, against 30% of the HK/UK book.</em></div></div>
+  </div>
+  <p>So a Hong Kong case at 110 beats a Hong Kong bottle at 100 — 110 against 115. At 120 it does not — 120 against 115. And because the walk ascends, the first corroborated offer of a type <i>is</i> the cheapest of that type; an HK/UK case scores at 1.00×, so once one is corroborated nothing above it can win.</p>
+  <p class="note"><span>This replaced <b>both</b> the old A/B/C/D waterfall <b>and</b> a 15% foreign-preference threshold. Those expressed the same two preferences — format and location — as separate gates that interacted in ways nobody could hold in their head. Here they are one number per offer and a straight minimum.</span>
+  <span>It also reverses an earlier rule that stopped the engine reaching up for a dearer case. The scoring <b>will</b> pay up to 15% for a case, and that is deliberate.</span></p>
+</section>
+
+<section>
+  <div class="sechead"><h2>What counts as corroboration</h2></div>
+  <p>Any other offer within <b>±15%</b>, of <b>any format and any size</b>. A magnum may second a bottle; a case may second a loose. Nothing seconds it → move up.</p>
+  <p>A <b>foreign loose</b> needs <b>two</b> seconds, unless one of them is an HK/UK offer, or a case already sits below it.</p>
+  <p class="note"><span><b>Why the walk starts at the cheapest offer.</b> It used to start second-lowest, as a guard against a lone cheap outlier setting a price. Corroboration already does that — an outlier fails because nothing sits within 15% of it, not because it was skipped. Starting one offer up meant anchoring on the <b>dearer</b> of any corroborating pair: correcting it moved <b>86 of 768 cells and every one went down</b>.</span></p>
+</section>
+
+<section>
+  <div class="sechead"><h2>When a cell has no price</h2>
+  <p class="lede" style="font-size:1rem">Two different facts, and worth telling apart.</p></div>
+  <div class="tw"><table>
+    <thead><tr><th>Reason</th><th>Share</th><th>What it means</th></tr></thead>
+    <tbody>
+      <tr><td><b>Nothing corroborated</b></td><td class="n">9.6%</td><td class="why">No two offers agree within 15%. <b>93% of these pools hold one or two offers</b> — genuinely unreadable markets.</td></tr>
+      <tr><td><b>Anchor past 1.5×</b></td><td class="n">0.5%</td><td class="why">Measured against the cheapest <i>corroborated</i> offer. The book really is incoherent.</td></tr>
+    </tbody>
+  </table></div>
+  <p class="note"><span><b>The floor must be a price something vouches for.</b> Measured against the raw cheapest offer the kill rule fired on 30 cells and <b>27 were artifacts</b> — Michel Gros × Aux Brûlées 2017 has 41 offers agreeing within 1–2% and died on a single listing 56.8% adrift. An offer nothing corroborates cannot set a price, so it must not set a floor either.</span>
+  <span>Killing rather than keeping is deliberate: a badly-read price pollutes the model, and a missing one does not.</span></p>
+
+  <h3>Junk listings</h3>
+  <p>wine-searcher republishes merchant data-entry errors verbatim — Arnoux-Lachaux Clos de Vougeot 2018 at <b>HK$22.76</b> a bottle, Raveneau Les Clos 2020 at <b>HK$14.42</b>. An offer is dropped when <b>both</b> nothing corroborates it <b>and</b> it sits under <b>20% of the pool’s median</b>. Genuinely-cheap-but-real offers cluster at 40–90% of median; a 20% cut catches seven offers across four thousand pools and every one is an obscure merchant at an impossible price.</p>
+</section>
+
+<section>
+  <div class="sechead"><h2>The parameters</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>Setting</th><th>Value</th><th>What it governs</th></tr></thead>
+    <tbody>
+      <tr><td>Corroboration / mv band</td><td class="n">±15%</td><td class="why">Symmetric, format- and size-blind</td></tr>
+      <tr><td>Type penalties</td><td class="n">1.00 / 1.15 / 1.15 / 1.30</td><td class="why">HK/UK case · HK/UK loose · foreign case · foreign loose</td></tr>
+      <tr><td>Foreign loose minimum</td><td class="n">2</td><td class="why">Seconds required, absent an easing condition</td></tr>
+      <tr><td>Climb kill</td><td class="n">1.5×</td><td class="why">Against the cheapest <b>corroborated</b> offer — beyond it the cell is dead</td></tr>
+      <tr><td>Junk floor</td><td class="n">20%</td><td class="why">Of the pool median, and only if uncorroborated</td></tr>
+      <tr><td>Render cap</td><td class="n">50</td><td class="why">Hitting it forces the favourites union</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section>
+  <div class="sechead"><h2>What it produces</h2></div>
+  <div class="tw"><table>
+    <thead><tr><th>Anchor type</th><th>Cells</th><th>Share</th></tr></thead>
+    <tbody>
+      <tr><td><b class="reach">HK/UK case</b></td><td class="n">310</td><td class="n"><b>48.7%</b></td></tr>
+      <tr><td><b class="reach">HK/UK loose</b></td><td class="n">176</td><td class="n">27.7%</td></tr>
+      <tr><td>foreign loose</td><td class="n">75</td><td class="n">11.8%</td></tr>
+      <tr><td>foreign case</td><td class="n">11</td><td class="n">1.7%</td></tr>
+      <tr><td>nothing corroborated</td><td class="n">61</td><td class="n">9.6%</td></tr>
+      <tr><td>killed at 1.5×</td><td class="n">3</td><td class="n">0.5%</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>89.9% priced. 85% of those anchor in Ken’s own market, and half on a corroborated HK/UK case.</b></p>
+</section>
+
+<footer>
+  All of it lives in one place — <span class="mono">pipeline/anchor_value.py</span> — which is the only thing permitted to produce either number. Every threshold is overridable by environment variable, and every one was set by measurement on identical pools rather than by argument. One rule of thumb earned the hard way: <b>a rule added to one pricing path is a bug until it is added to the other</b>.
+</footer>
+</div>
+</body></html>

@@ -1,0 +1,263 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Rossignol-Trapet Chapelle</title></head><body><nav aria-label="Wine pages" style="font:14px system-ui;padding:12px 16px;border-bottom:1px solid #ddd;background:#faf7f2;color:#542636"><a style="color:inherit" href="index.html">Cellar dashboard</a> · <a style="color:inherit" href="pages.html">All wine pages</a></nav>
+<style>
+:root{--bg:#f6f5f1;--card:#fffefb;--ink:#1a1a17;--ink2:#5c5a53;--ink3:#8b887e;
+ --line:#e2e0d8;--rule:#cbc8bd;--wine:#5b4a72;--gold:#8f7526;--good:#3f6b45;--bad:#95412f;
+ --shadow:0 1px 2px rgba(26,26,23,.05),0 10px 30px -20px rgba(26,26,23,.35)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14131a;--card:#1b1a22;
+ --ink:#f0eef4;--ink2:#a5a1ad;--ink3:#78747f;--line:#2c2a35;--rule:#3a3746;--wine:#b6a3d0;
+ --gold:#cfae5e;--good:#7fae84;--bad:#d08d78;
+ --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -22px rgba(0,0,0,.9)}}
+:root[data-theme=dark]{--bg:#14131a;--card:#1b1a22;--ink:#f0eef4;--ink2:#a5a1ad;--ink3:#78747f;
+ --line:#2c2a35;--rule:#3a3746;--wine:#b6a3d0;--gold:#cfae5e;--good:#7fae84;--bad:#d08d78;
+ --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -22px rgba(0,0,0,.9)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:44px clamp(16px,4vw,40px) 90px}
+h1{font:600 34px/1.1 ui-serif,"Iowan Old Style",Georgia,serif;margin:0 0 4px;letter-spacing:-.015em}
+.sub{color:var(--ink2);margin:0 0 18px;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 26px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;
+ padding:5px 12px;font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.chip b{color:var(--ink);font-weight:620}
+.alert{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--bad);
+ border-radius:11px;padding:18px 22px;margin:0 0 26px}
+.alert p{margin:0;font-size:15px}
+.alert b{color:var(--bad)}
+.verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--wine);
+ border-radius:12px;padding:24px 26px;box-shadow:var(--shadow);margin:0 0 28px}
+.vhead{font:600 27px/1.15 ui-serif,Georgia,serif;margin:0 0 4px}
+.vhead em{font-style:normal;color:var(--wine)}
+.vline{color:var(--ink2);font-size:14.5px;margin:0 0 18px}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;
+ border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;margin:0 0 18px}
+.three div{font-size:14px;color:var(--ink2)}
+.three b{display:block;font:600 22px/1.2 ui-serif,Georgia,serif;color:var(--ink);
+ font-variant-numeric:tabular-nums}
+.verdict p{margin:0;font-size:15.5px}
+h2{font:600 13px/1.2 ui-sans-serif,sans-serif;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--ink3);margin:38px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--rule)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:18px 20px}
+.card h3{font:600 15px/1.3 ui-serif,Georgia,serif;margin:0 0 8px;color:var(--wine)}
+.card p{margin:0 0 10px;font-size:14.5px}.card p:last-child{margin:0}
+.pick{border-left:3px solid var(--gold)}
+.pick .buy{font-size:13px;color:var(--ink2);margin:0 0 10px;font-variant-numeric:tabular-nums}
+.for,.ag{font-size:14px;margin:0 0 6px}
+.for b{color:var(--good)}.ag b{color:var(--bad)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:11px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th{text-align:left;font:600 10.5px/1.2 ui-sans-serif,sans-serif;letter-spacing:.06em;
+ text-transform:uppercase;color:var(--ink3);padding:11px 9px;border-bottom:1px solid var(--rule);
+ white-space:nowrap;position:sticky;top:0;background:var(--card)}
+td{padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.y{font-weight:650}
+tr.top td{background:color-mix(in srgb,var(--gold) 9%,transparent)}
+.pos{color:var(--good);font-weight:600}.neg{color:var(--bad);font-weight:600}
+.mut{color:var(--ink3)}
+.note{font-size:13.5px;color:var(--ink2);margin:14px 0 0}
+.warn{border-left:3px solid var(--gold);padding-left:14px;margin:16px 0}
+.big{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);
+ border-radius:11px;padding:20px 22px;margin:0 0 22px}
+.big table{font-size:13.5px;width:auto;margin-top:10px}
+.big td,.big th{border:0;padding:4px 16px 4px 0;white-space:nowrap}
+</style>
+<div class="wrap">
+
+<h1>Rossignol-Trapet · Chapelle-Chambertin</h1>
+<p class="sub">Ten vintages, 2012–2022. The cheapest way into grand cru Gevrey on these three
+ladders — and the one where the model is least reliable.</p>
+<div class="chips">
+  <span class="chip">producer capability <b>A−</b></span>
+  <span class="chip">cru level <b>S−</b></span>
+  <span class="chip">cru style <b>Delicate &amp; Perfumed</b> · Rich &amp; Silky 30%</span>
+  <span class="chip">producer style <b>Spiced &amp; Herbal</b> · Delicate &amp; Perfumed 40%</span>
+  <span class="chip">resolves to <b>Delicate &amp; Perfumed</b> · 52%, the strongest of the three</span>
+  <span class="chip">the other Trapet · split from Domaine Trapet in 1990</span>
+</div>
+
+<div class="alert">
+  <p><b>Read the ranking, not the percentages.</b> Correlating the model against this market across
+  all ten vintages gives <b>r = +0.17</b> — effectively no relationship, against +0.70 on Trapet's
+  Chambertin and +0.60 on his Latricières. The order below is still sound, because it rests mostly
+  on price and pack rather than on the model being level-correct. But the "% cheaper than the
+  model" figures are not trustworthy for this wine and I have not put them in the summary.</p>
+</div>
+
+<div class="verdict">
+  <p class="vhead">BUY — the <em>2019</em></p>
+  <p class="vline">Case of 6 · <b>HK$6,668</b> the case · HK$1,111 a bottle · CultX HK</p>
+  <div class="three">
+    <div><b>HK$1,111</b> a bottle — the cheapest grand cru on any of the three ladders</div>
+    <div><b>16 offers, 15 cases</b> — the deepest market of the ten</div>
+    <div><b>2026–2036</b> when to drink</div>
+  </div>
+  <p>Rossignol-Trapet is the other half of the Trapet family estate, split in 1990, and it sells at
+  roughly two-thirds what Jean-Louis Trapet's wines fetch. Chapelle-Chambertin is the gentlest of
+  the Gevrey grand crus — the framework calls the site itself <em>Delicate &amp; Perfumed</em>,
+  which is unusual for the commune — so this is the one wine of the three where the vineyard and
+  the producer both point at the style you like. It resolves to <b>52% Delicate &amp; Perfumed</b>,
+  the cleanest reading on any Trapet ladder. The 2019 is a <em>great+</em> year, the cheapest
+  bottle here, sold as a proper six-pack, with fifteen case offers standing behind it.</p>
+</div>
+
+<div class="big">
+  <p style="margin:0;font-size:15px"><b>What this ladder was really for.</b> Chapelle and
+  Latricières sit at the <b>same cru level (S−)</b>, so putting this ladder beside Trapet's
+  Latricières isolates the <b>producer</b> gap the way the last pair isolated the cru gap. Across
+  the nine vintages both wines share, the market prices Rossignol-Trapet at <b>0.66×</b> Domaine
+  Trapet — but see the correction below: on like-for-like bases it is <b>0.61×</b>. The framework's
+  capability rungs — <b>A−</b> against <b>A+</b> — predict <b>0.55×</b>.</p>
+  <table>
+    <tr><th>vintage</th><td>2014</td><td>2015</td><td>2016</td><td>2017</td><td>2018</td><td>2019</td><td>2020</td><td>2021</td><td>2022</td></tr>
+    <tr><th>market ratio</th><td>0.57</td><td>0.47</td><td>0.82</td><td>1.00</td><td>0.57</td><td>0.32</td><td>0.86</td><td>0.89</td><td>0.75</td></tr>
+  </table>
+  <p style="margin:10px 0 0;font-size:13.5px;color:var(--ink2)"><b>⚠ SUPERSEDED 2026-08-20 — and
+  the direction reverses.</b> The 0.66× above is built from <em>cheapest-buyable</em>, which mixes
+  loose bottles with cases. Recomputed on <b>cheapest case per bottle</b>, the market gap is
+  <b>0.48×</b> across nine vintages against a modelled 0.55× — so <b>the model UNDER-discounts the
+  A+ → A− step</b>, the opposite of what this panel first said. A later ladder on Trapet's own
+  Chapelle ran the same test on the <b>same vineyard</b> and got <b>0.47×</b> (n=9). Two
+  independent routes within 0.01 of each other; that agreement is the evidence, and the earlier
+  figures had none.</p>
+</div>
+
+<div class="alert" style="border-left-color:var(--gold)">
+  <p><b style="color:var(--gold)">A defect this ladder exposes.</b> The framework gives
+  Rossignol-Trapet <b>higher</b> prestige than Domaine Trapet — <code>A^</code> against
+  <code>A−^</code> — while the market charges two-thirds as much for it. Prestige is the price
+  lever, so this is precisely the axis price evidence is entitled to speak to, and it is pointing
+  the wrong way. Both producers sit in the Côte de Nuits calibration panel, so a prestige pass
+  should have caught it; that it has not suggests their cells are too few or too scattered to move
+  the letters. <b>Worth a look independently of any buying decision.</b></p>
+</div>
+
+<h2>In the glass</h2>
+<div class="cols">
+  <div class="card">
+    <h3>Look</h3>
+    <p>Medium ruby, a shade deeper than Trapet's wines — Rossignol-Trapet destems less
+    consistently and the wines carry a little more colour and grip.</p>
+    <p class="mut" style="font-size:13px">⚠ Inferred from house style; not from a critic note.</p>
+  </div>
+  <div class="card">
+    <h3>Nose</h3>
+    <p>Chapelle is the perfumed one: red cherry, violet, a lift of something almost floral. The
+    producer adds a savoury, herbal edge — the framework calls their primary style
+    <em>Spiced &amp; Herbal</em> — so expect dried thyme and pepper behind the fruit.</p>
+  </div>
+  <div class="card">
+    <h3>Palate</h3>
+    <p>Lighter-framed than either Trapet wine and quicker to open. Chapelle sits on shallower soil
+    at the bottom of the grand cru band and gives a wine you can drink at eight years rather than
+    fifteen. Tannins are present but soft.</p>
+  </div>
+</div>
+
+<h2>Palate fit</h2>
+<div class="card">
+  <p><b>This is the best stylistic fit of the three ladders, and for a reason worth understanding.</b>
+  On Trapet's Chambertin the producer and site fight to a 35/35 draw. On his Latricières the
+  producer wins at 42%. Here <b>both</b> point the same way — Chapelle-Chambertin is itself a
+  <em>Delicate &amp; Perfumed</em> site, and Rossignol-Trapet carries that as its 40% secondary —
+  so the wine resolves at <b>52%</b>, the cleanest of the set. There is no tension to resolve.</p>
+  <p><b>And the cool years swing hardest here too.</b> 2014 and 2021 both take <b>+3.7</b>, the
+  largest palate-fit gains anywhere on the three ladders. The hot years give back 0.6–0.7. Same
+  lesson as the other two, more pronounced: <b>buy the cool years.</b></p>
+  <p>⚠ Note the quality numbers on this page run <b>81–85</b>, against 87–90 for the Latricières
+  and 91–93 for the Chambertin. That is the A− capability rung doing its work. If you think this
+  wine drinks better than an 81 — and the critics, who score it 92–95, evidently do — then the
+  disagreement is with the capability letter, not with this report.</p>
+</div>
+
+<h2>What to buy</h2>
+<div class="cols">
+  <div class="card pick">
+    <h3>1 · 2019 — the buy</h3>
+    <p class="buy">6×75cl · HK$6,668 · HK$1,111/btl · CultX HK</p>
+    <p class="for"><b>For</b> — the cheapest bottle across all three Trapet ladders and the deepest
+    pool of this one: 16 offers, 15 of them cases. A <em>great+</em> vintage, ripe with freshness,
+    fit +1.2. Grand cru Gevrey at a village price.</p>
+    <p class="ag"><b>Against</b> — a cheaper case sits 8% behind it, likely UK in-bond. And the
+    critics rate Rossignol's 2019 at 92, the lowest of its recent run.</p>
+  </div>
+  <div class="card pick">
+    <h3>2 · 2014 — the palate pick</h3>
+    <p class="buy">6×75cl · HK$7,005 · HK$1,168/btl · Bordeaux Index LiveTrade HK</p>
+    <p class="for"><b>For</b> — joint-best palate fit on any of the three ladders (<b>+3.7</b>, a
+    cool year), and the offer is <b>11% cheaper than the next case</b>, the only positive row here.
+    Nine critic scores, the most-reviewed vintage of the ten.</p>
+    <p class="ag"><b>Against</b> — only two case offers behind it, so the depth is thin and the
+    price could move on one sale. Drink 2024–2034; it is the shortest-lived row here.</p>
+  </div>
+  <div class="card pick">
+    <h3>3 · 2016 — the classic year</h3>
+    <p class="buy">6×75cl · HK$8,445 · HK$1,408/btl · Bordeaux Index LiveTrade HK</p>
+    <p class="for"><b>For</b> — <em>great+</em>, classic weather, fit +2.2, and a genuine six-pack.
+    The best combination of vintage quality and palate fit on the ladder.</p>
+    <p class="ag"><b>Against</b> — a cheaper case sits <b>18% below</b> it, the second-worst gap
+    here, so this particular offer is not the keen one. Frost year: small crop, limited stock.</p>
+  </div>
+</div>
+
+<h2>What the ladder says, and what to distrust</h2>
+<div class="card">
+  <p><b>This is a case market, which the other two were not.</b> Nine of the ten cheapest-buyable
+  offers are six-packs — on Trapet's Latricières, six of nine were single bottles. So the prices
+  here are prices you can actually act on, and the outlay column is the real number rather than a
+  taste-test.</p>
+  <p><b>The market is steadier at the old end than Trapet's Latricières.</b> Offer counts run 5 to
+  16 across 2012–2022 with no dead year, where the Latricières collapsed to a single offer at 2013.
+  Rossignol-Trapet makes more wine, sells it cheaper, and more of it stays in circulation instead
+  of being drunk. <b>2010, 2011 and 2013 were not fetched</b> — the probe showed no dead end, but
+  they add nothing to the producer comparison, which needs the years both ladders share.</p>
+  <p><b>Almost every row is dearer than the next case behind it</b> — nine of ten are negative on
+  that measure, worst at 2020 and 2017 (both about 35%). Read as one finding rather than ten: the
+  Hong-Kong-first cheapest-buyable on this wine is systematically <em>not</em> the cheapest case
+  available, and a UK in-bond buyer would do materially better across the board.</p>
+  <p class="warn"><b>What to distrust.</b> First and loudest: <b>r = +0.17</b> — the model does not
+  track this market, so treat every model-derived figure in the table as indicative only. Second,
+  the <b>2017's market value (HK$1,113) sits below its own cheapest-buyable (HK$1,672)</b>; the
+  pricer flagged it, and it means that particular offer is dear against a pool that is otherwise
+  cheaper — which is why it carries a negative read. Third, the <b>critic column is seven-tenths
+  empty</b>, the same Cru sourcing failure as the other two reports; the three filled entries are
+  marked <code>*</code> because they are wine-searcher's named gate critic rather than a
+  de-duplicated Cru panel. Fourth, the <b>producer-gap number (0.66×) rests on a 0.32–1.00 spread</b>
+  and on the assumption that Chapelle and Latricières are the same rung — it is a much softer
+  reading than the cru comparison that preceded it.</p>
+</div>
+
+<h2>The ladder</h2>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Vintage</th><th>Year rated</th><th>Character</th><th>Quality</th><th>For you</th>
+<th>Critics (gate)</th><th>Cheapest</th><th>Pack</th><th>Outlay</th><th>Merchant</th>
+<th>vs quality</th><th>vs your taste</th><th>vs next offer</th><th>Offers</th><th>Cases</th>
+<th>My read</th><th>Drink</th>
+</tr></thead>
+<tbody>
+<tr class="top"><td class="y">2019</td><td>great+</td><td>warm</td><td>84.0</td><td>85.2</td><td>JM 92*</td><td>HK$1,111</td><td>6x75cl</td><td>HK$6,668</td><td>CultX HK</td><td class="pos">+20%</td><td class="pos">+32%</td><td class="neg">-8%</td><td>16</td><td>15</td><td><span class="pos">+1</span></td><td>2029–2036</td></tr>
+<tr class="top"><td class="y">2014</td><td>very good</td><td>cool</td><td>81.4</td><td>85.1</td><td><span class=mut>not sourced</span></td><td>HK$1,168</td><td>6x75cl</td><td>HK$7,005</td><td>Bordeaux Index - LiveTrade - Hong Kong</td><td class="neg">-10%</td><td class="pos">+27%</td><td class="pos">+11%</td><td>5</td><td>2</td><td><span class="pos">+1</span></td><td>2024–2030</td></tr>
+<tr class="top"><td class="y">2016</td><td>great+</td><td>classic</td><td>84.0</td><td>86.2</td><td><span class=mut>not sourced</span></td><td>HK$1,408</td><td>6x75cl</td><td>HK$8,445</td><td>Bordeaux Index - LiveTrade - Hong Kong</td><td class="neg">-1%</td><td class="pos">+25%</td><td class="neg">-18%</td><td>6</td><td>6</td><td><span class="mut">0</span></td><td>2026–2033</td></tr>
+<tr class=""><td class="y">2015</td><td>exceptional</td><td>hot</td><td>84.8</td><td>84.2</td><td><span class=mut>not sourced</span></td><td>HK$1,362</td><td>6x75cl</td><td>HK$8,170</td><td>Cru World Wine - Hong Kong</td><td class="pos">+12%</td><td class="pos">+5%</td><td class="neg">-10%</td><td>13</td><td>13</td><td><span class="mut">0</span></td><td>2026–2033</td></tr>
+<tr class=""><td class="y">2018</td><td>very good+</td><td>hot</td><td>82.2</td><td>81.6</td><td><span class=mut>not sourced</span></td><td>HK$1,199</td><td>6x75cl</td><td>HK$7,195</td><td>Goedhuis & Co. Hong Kong</td><td class="neg">-4%</td><td class="neg">-11%</td><td class="neg">-11%</td><td>9</td><td>9</td><td><span class="pos">+1</span></td><td>2028–2035</td></tr>
+<tr class=""><td class="y">2021</td><td>very good</td><td>cool</td><td>81.4</td><td>85.1</td><td>JM 95</td><td>HK$1,608</td><td>6x75cl</td><td>HK$9,645</td><td>Cru World Wine - Hong Kong</td><td class="neg">-51%</td><td class="mut">+0%</td><td class="neg">-4%</td><td>15</td><td>8</td><td><span class="mut">0</span></td><td>2031–2037</td></tr>
+<tr class=""><td class="y">2012</td><td>great</td><td>classic</td><td>83.1</td><td>85.5</td><td><span class=mut>not sourced</span></td><td>HK$1,841</td><td>6x75cl</td><td>HK$11,045</td><td>Cru World Wine - Hong Kong</td><td class="neg">-46%</td><td class="neg">-9%</td><td class="neg">-15%</td><td>9</td><td>9</td><td><span class="mut">0</span></td><td>2022–2029</td></tr>
+<tr class=""><td class="y">2022</td><td>great+</td><td>warm</td><td>84.0</td><td>85.2</td><td>JM 93*</td><td>HK$2,317</td><td>1x75cl</td><td>HK$2,317</td><td>Wine Lyrics Limited</td><td class="neg">-66%</td><td class="neg">-41%</td><td class="neg">-12%</td><td>10</td><td>9</td><td><span class="mut">0</span></td><td>2032–2039</td></tr>
+<tr class=""><td class="y">2017</td><td>very good+</td><td>warm</td><td>82.2</td><td>83.7</td><td><span class=mut>not sourced</span></td><td>HK$1,672</td><td>6x75cl</td><td>HK$10,032</td><td>CultX HK</td><td class="neg">-45%</td><td class="neg">-24%</td><td class="neg">-35%</td><td>8</td><td>7</td><td><span class="neg">−1</span></td><td>2027–2034</td></tr>
+<tr class=""><td class="y">2020</td><td>great+</td><td>hot</td><td>84.0</td><td>83.3</td><td><span class=mut>not sourced</span></td><td>HK$1,812</td><td>6x75cl</td><td>HK$10,870</td><td>Cru World Wine - Hong Kong</td><td class="neg">-30%</td><td class="neg">-40%</td><td class="neg">-36%</td><td>7</td><td>7</td><td><span class="neg">−1</span></td><td>2030–2037</td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">Ranked on Ken's criteria — value (half), the next-case comparison (a quarter), the
+pack (15%) and my read (10%). <b>Cheapest · Pack · Outlay · Merchant describe the cheapest-buyable
+offer itself.</b> <em>vs next offer</em> below zero means a cheaper case exists that the
+Hong-Kong-first rule did not pick. ⚠ <b>The two model-derived columns are unreliable on this wine
+(r = +0.17)</b> and are shown for completeness, not for decisions. Critics are gate only
+(BH · JM · NM · WK · WA · AG); <code>*</code> marks a score taken from wine-searcher's named critic
+rather than a de-duplicated Cru panel.</p>
+
+</div>
+</body></html>

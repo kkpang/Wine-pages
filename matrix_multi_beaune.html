@@ -1,0 +1,537 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Côte de Beaune red — multi-vintage matrix</title></head><body><nav aria-label="Wine pages" style="font:14px system-ui;padding:12px 16px;border-bottom:1px solid #ddd;background:#faf7f2;color:#542636"><a style="color:inherit" href="index.html">Cellar dashboard</a> · <a style="color:inherit" href="pages.html">All wine pages</a></nav>
+<style>
+:root{--bg:#faf9f7;--surface:#fff;--ink:#14140f;--ink2:#5c5a52;--ink3:#8f8c81;
+--line:#e2dfd7;--mid:#f0efec;--sticky:#f4f2ee;--sel:#14140f}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141412;--surface:#1a1a19;
+--ink:#f4f3ef;--ink2:#a9a69c;--ink3:#75736a;--line:#2e2e2a;--mid:#383835;--sticky:#232320;--sel:#f4f3ef}}
+:root[data-theme=dark]{--bg:#141412;--surface:#1a1a19;--ink:#f4f3ef;--ink2:#a9a69c;--ink3:#75736a;
+--line:#2e2e2a;--mid:#383835;--sticky:#232320;--sel:#f4f3ef}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+font:15px/1.5 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{padding:28px clamp(14px,3vw,40px) 60px;max-width:1600px;margin:0 auto}
+h1{font-size:1.45rem;font-weight:620;letter-spacing:-.015em;margin:0 0 6px;text-wrap:balance}
+.sub{color:var(--ink2);margin:0 0 4px;max-width:70ch}
+.sub b{color:var(--ink);font-weight:600}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 14px}
+.tab{appearance:none;background:var(--surface);border:1px solid var(--line);border-radius:10px;
+padding:8px 14px;cursor:pointer;color:var(--ink);text-align:left;font:inherit;line-height:1.25}
+.tab b{display:block;font-size:.92rem;font-weight:620}
+.tab span{display:block;font-size:.72rem;color:var(--ink2);font-variant-numeric:tabular-nums}
+.tab[aria-selected=true]{border-color:var(--sel);box-shadow:inset 0 0 0 1px var(--sel)}
+.tab:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+.scroll{overflow:auto;max-height:78vh;border:1px solid var(--line);border-radius:10px;
+background:var(--surface)}
+table{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;
+table-layout:fixed;width:max-content}
+th,td{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ch{position:sticky;top:0;z-index:3;background:var(--sticky);height:190px;vertical-align:bottom;
+padding:8px 0 10px;width:48px}
+.corner{position:sticky;left:0;top:0;z-index:4;background:var(--sticky);text-align:left;
+padding:6px 12px 10px 14px;vertical-align:bottom;font-size:.85rem;width:236px}
+.rot{display:block;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;
+font-weight:520;font-size:.78rem;text-align:left;padding-left:4px}
+.rot .tr{color:var(--ink3);font-size:.72rem;font-weight:600}
+.rhw{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.rh .tr{color:var(--ink3);font-size:.74rem;font-weight:600;letter-spacing:.02em}
+.tr i{font-style:normal;opacity:.45;padding:0 1px}
+td.nd{opacity:.42;font-style:italic}
+/* PARTLY PARKED: some vintages scored, some not. Not faded — the cell IS in the average — but the
+   average rests on fewer vintages than the cell shows, and that must be visible without a hover. */
+td.pp{position:relative}
+td.pp::after{content:"";position:absolute;top:0;right:0;border-width:0 7px 7px 0;
+             border-style:solid;border-color:transparent #e0a04a transparent transparent}
+.rh{position:sticky;left:0;z-index:2;background:var(--sticky);text-align:left;
+padding:6px 12px;font-weight:500;font-size:.85rem}
+td{text-align:center;padding:0;height:34px;font-size:.8rem}
+td.e{background:repeating-linear-gradient(45deg,transparent,transparent 5px,
+var(--line) 5px,var(--line) 6px);opacity:.32}
+td.v{background:var(--mid);font-weight:520;cursor:crosshair}
+td.sub{outline:2px dashed var(--ink3);outline-offset:-4px}
+/* AN EXCEPTED CELL MUST NOT LOOK LIKE A CELL THE LETTERS GOT RIGHT — Ken, 2026-08-09.
+   Drawn as a corner wedge rather than an outline so it cannot be confused with .sub
+   (substituted vintage), and as a ::after pseudo-element so paint()'s textContent
+   rewrite cannot wipe it. */
+td.v{position:relative}
+td.exc::after{content:'';position:absolute;top:0;right:0;border:5px solid transparent;
+  border-top-color:#7b2fbe;border-right-color:#7b2fbe}
+td.exc.q::after{border-top-color:#0f7b52;border-right-color:#0f7b52}
+td.exc.m::after{border-top-color:#b8860b;border-right-color:#b8860b}
+/* CELL COUNTS ON THE HEADERS — Ken, 2026-08-09. The count is of SCORED cells in the CURRENT
+   VIEW, so it changes with the tab: a cell priced at 2020 and not 2017 is counted in one and
+   not the other, and parked cells are counted in neither. That is the number a row or column
+   mean actually rests on, which is the point of showing it beside the name. */
+.cnt{font-style:normal;font-weight:400;color:var(--ink2);font-size:10px;margin-left:4px}
+.tipexc{margin-top:7px;padding-top:6px;border-top:1px solid var(--ink3)}
+#tip tr.pkrow td{opacity:.45;text-decoration:line-through}
+#tip tr.pkrow td i{text-decoration:none;font-style:normal;color:#e0a04a;font-size:10.5px;
+                   letter-spacing:.04em;text-transform:uppercase}
+.tippk{margin-top:7px;padding-top:6px;border-top:1px solid var(--ink3);
+       font-size:11px;color:var(--ink2);white-space:normal}
+.tippk b{color:#e0a04a}
+.tipexc b{color:#c79bec}
+.tipexc i{color:var(--ink2);font-style:normal;display:block;font-size:11px}
+td.med{font-weight:680;background:var(--sticky);line-height:1.15}
+/* A PARKED ROW OR COLUMN NOW SHOWS ITS OWN AVERAGE — Ken, 2026-08-11: *"I can't see the average
+   for the parked rows or columns. Can I see them? like the cells parked rows and column are
+   shaded"*. It used to show a bare em-dash, on the older doctrine that a parked name counts in no
+   statistic. That doctrine changed the same day: the pass now SETS a parked name's letter from
+   the average of all its own cells, so a number that moves a letter was invisible to the person
+   ruling on it. Shaded and italic, exactly as td.nd draws a parked cell, so it can never be read
+   as part of the headline — which still excludes every parked cell. */
+td.med.pk{opacity:.5;font-style:italic;font-weight:560}
+.gm{display:block;font-weight:500;font-size:.72em;color:var(--ink2)}
+tfoot th{position:sticky;left:0;z-index:3;background:var(--sticky);text-align:left;
+padding:6px 14px;font-size:.78rem;letter-spacing:.04em;text-transform:uppercase;color:var(--ink2)}
+tfoot td{position:sticky;bottom:0;z-index:2}
+.stats{display:flex;flex-wrap:wrap;gap:0 26px;margin:0 0 16px;padding:12px 16px;
+background:var(--surface);border:1px solid var(--line);border-radius:10px;
+font-size:.82rem;font-variant-numeric:tabular-nums}
+.stats div{display:flex;gap:8px;align-items:baseline}
+.stats dt{color:var(--ink2)}
+.stats dd{margin:0;font-weight:640}
+td.v:hover{outline:2px solid var(--sel);outline-offset:-2px}
+#tip{position:fixed;z-index:50;pointer-events:none;opacity:0;transition:opacity .09s;
+background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+padding:11px 13px;box-shadow:0 8px 26px rgba(0,0,0,.19);font-size:.8rem;line-height:1.45;
+/* THE BOX SIZES TO ITS CONTENT. Ken, 2026-08-07: *"the box for mouse over is smaller than
+   text"* — it carried a flat max-width:320px while every cell is white-space:nowrap, so the
+   fourth column (model price) simply ran out the side. width:max-content makes the box as wide
+   as its widest row; the cap only stops a long producer+cru heading running off a narrow
+   window, and that heading is allowed to wrap. */
+width:max-content;max-width:min(460px,calc(100vw - 24px))}
+#tip.on{opacity:1}
+#tip .w{font-weight:640;margin-bottom:6px;white-space:normal}
+#tip table{width:100%;table-layout:auto;font-size:.78rem;border-spacing:0}
+#tip td{border:0;height:auto;padding:2px 0;text-align:right;white-space:nowrap}
+#tip td:nth-child(1){text-align:left;color:var(--ink2);padding-right:16px}
+#tip td:nth-child(2){padding-right:12px}
+#tip td:nth-child(3){padding-right:14px;color:var(--ink2)}
+#tip td:nth-child(4){font-weight:640}
+/* Column header, so "market" and "model" are never guessed from position alone. */
+#tip tr.hd td{color:var(--ink3);font-size:.68rem;letter-spacing:.04em;text-transform:uppercase;
+padding-bottom:4px}
+#tip tr.hd td:nth-child(3){color:var(--ink3)}
+#tip tr.tot td{border-top:1px solid var(--line);padding-top:6px}
+@media (prefers-reduced-motion:reduce){#tip{transition:none}}
+</style>
+<div class="wrap">
+<h1>Côte de Beaune red — calibration matrix</h1>
+<p class="sub">Every cell is <b>market ÷ model</b>, each vintage scored against <b>its own model</b> so the numbers mean the same thing in every view. <b>1.00 means the model is right.</b> Warm = the market pays more than the letters predict; cool = less. The <b>average</b> view is the geometric mean of a cell's vintages — and it is the less noisy view, not a bigger sample: two vintages of one wine are two draws from one market. Disagreement <i>between</i> vintages is the more interesting signal. A corner wedge marks a cell carrying an <b>exception</b> — hover for which one.</p>
+<div class="tabs" role="tablist">
+<button class="tab" data-v="avg" role="tab"><b>All vintages</b><span>200 wines · 0.98× · 62%</span></button>
+<button class="tab" data-v="2022" role="tab"><b>2022</b><span>33 wines · 1.00× · 52%</span></button>
+<button class="tab" data-v="2020" role="tab"><b>2020</b><span>29 wines · 0.99× · 52%</span></button>
+<button class="tab" data-v="2019" role="tab"><b>2019</b><span>29 wines · 1.00× · 62%</span></button>
+<button class="tab" data-v="2018" role="tab"><b>2018</b><span>33 wines · 0.94× · 73%</span></button>
+<button class="tab" data-v="2017" role="tab"><b>2017</b><span>34 wines · 1.00× · 71%</span></button>
+<button class="tab" data-v="2014" role="tab"><b>2014</b><span>24 wines · 0.99× · 71%</span></button>
+<button class="tab" data-v="2011" role="tab"><b>2011</b><span>18 wines · 1.05× · 50%</span></button>
+</div>
+<div class="stats" id="stats"></div>
+<script>const SUMMARY={"avg": {"n": 200, "gm": 0.9841860647245657, "med": 0.9840647766958199, "inband": 124, "pct": 62, "lo": 0.5186562333876497, "hi": 2.2633141821053275, "rmse": 0.20729260967149088, "gm_plain": 0.9806345796214436, "rmse_plain": 0.28849923741624983, "q": [590.4050000000001, 988.0677083333334, 1683.1638888888888], "ep": 0.2875261988238671, "em": -0.22331677529087735}, "2022": {"n": 33, "gm": 1.0015015650209753, "med": 1.0199266318298663, "inband": 17, "pct": 52, "lo": 0.5186562333876497, "hi": 2.2633141821053275, "rmse": 0.24570248259804472, "gm_plain": 0.9916150091637689, "rmse_plain": 0.37793497481379834, "q": [598.4555555555556, 1169.6922619047618, 1751.1770833333335], "ep": 0.37778258195029557, "em": -0.27419607919235867}, "2020": {"n": 29, "gm": 0.9894206603619948, "med": 1.0057351077061563, "inband": 15, "pct": 52, "lo": 0.5674923562957803, "hi": 1.6020397305359988, "rmse": 0.2307554832986587, "gm_plain": 0.9778801863239323, "rmse_plain": 0.3052516968110206, "q": [542.1715277777777, 1019.8177777777778, 1912.8646666666668], "ep": 0.30402437300199825, "em": -0.23314316764041987}, "2019": {"n": 29, "gm": 0.9983557233953, "med": 1.037871654214594, "inband": 18, "pct": 62, "lo": 0.5772857151297986, "hi": 1.7357696809206762, "rmse": 0.21385935464791017, "gm_plain": 0.9945412497388277, "rmse_plain": 0.3055165244696758, "q": [561.9101851851852, 1041.2969999999998, 2257.025], "ep": 0.30544315922318654, "em": -0.23397660561869482}, "2018": {"n": 33, "gm": 0.9431073554701109, "med": 0.9125676709140111, "inband": 24, "pct": 73, "lo": 0.6507413353636421, "hi": 2.077968783240461, "rmse": 0.18219937891487215, "gm_plain": 0.9448371865645556, "rmse_plain": 0.28922082809574, "q": [602.3884523809523, 917.1983333333334, 1544.7091666666668], "ep": 0.28097287752662825, "em": -0.21934334633934316}, "2017": {"n": 34, "gm": 0.9969268986763421, "med": 0.9809792139036574, "inband": 24, "pct": 71, "lo": 0.6465315118527881, "hi": 1.4694992265626936, "rmse": 0.1494294582146083, "gm_plain": 0.9848715419544801, "rmse_plain": 0.2125009836770313, "q": [633.2305555555555, 918.2022222222223, 1640.3116666666665], "ep": 0.21176890930965486, "em": -0.17476014418483443}, "2014": {"n": 24, "gm": 0.9947568589201378, "med": 0.9778913854813854, "inband": 17, "pct": 71, "lo": 0.7040412877163148, "hi": 1.3381246806902656, "rmse": 0.2024401274407246, "gm_plain": 0.9619605318613456, "rmse_plain": 0.21179830327146454, "q": [729.305, 1001.5116666666668, 1559.5833333333333], "ep": 0.2070147203174444, "em": -0.1715096898428874}, "2011": {"n": 18, "gm": 1.051427749222571, "med": 0.9985623730771462, "inband": 9, "pct": 50, "lo": 0.7373811555491089, "hi": 1.637821806276381, "rmse": 0.26817710657970495, "gm_plain": 1.02792600153415, "rmse_plain": 0.27490046858863826, "q": [659.17, 857.875, 1411.501875], "ep": 0.27290443892963756, "em": -0.21439507207557384}};</script>
+<div class="scroll"><table><thead><tr><th class="corner"><span class="rhw"><span>producer</span><span class="tr">cap<i>/</i>prestige</span></span></th>
+<th class="ch" data-cru="Corton Clos du Roi"><span class="rot"><span class="nm">Corton Clos du Roi<i class="cnt"></i></span><span class="tr">A+<i>/</i>B+^</span></span></th>
+<th class="ch" data-cru="Pommard 1er Les Rugiens"><span class="rot"><span class="nm">Pommard 1er Les Rugiens<i class="cnt"></i></span><span class="tr">A+<i>/</i>A</span></span></th>
+<th class="ch" data-cru="Volnay 1er Les Caillerets"><span class="rot"><span class="nm">Volnay 1er Les Caillerets<i class="cnt"></i></span><span class="tr">A+<i>/</i>A</span></span></th>
+<th class="ch" data-cru="Volnay 1er Clos des Ducs"><span class="rot"><span class="nm">Volnay 1er Clos des Ducs<i class="cnt"></i></span><span class="tr">A<i>/</i>S-^</span></span></th>
+<th class="ch" data-cru="Volnay 1er Clos du Château des Ducs"><span class="rot"><span class="nm">Volnay 1er Clos du Château des Ducs<i class="cnt"></i></span><span class="tr">A<i>/</i>A+</span></span></th>
+<th class="ch" data-cru="Corton Renardes"><span class="rot"><span class="nm">Corton Renardes<i class="cnt"></i></span><span class="tr">A<i>/</i>A+^</span></span></th>
+<th class="ch" data-cru="Pommard 1er Les Épenots"><span class="rot"><span class="nm">Pommard 1er Les Épenots<i class="cnt"></i></span><span class="tr">A<i>/</i>A+</span></span></th>
+<th class="ch" data-cru="Volnay 1er Clos des Chênes"><span class="rot"><span class="nm">Volnay 1er Clos des Chênes<i class="cnt"></i></span><span class="tr">A<i>/</i>A+^</span></span></th>
+<th class="ch" data-cru="Corton Bressandes"><span class="rot"><span class="nm">Corton Bressandes<i class="cnt"></i></span><span class="tr">A<i>/</i>A-^</span></span></th>
+<th class="ch" data-cru="Volnay 1er Taillepieds"><span class="rot"><span class="nm">Volnay 1er Taillepieds<i class="cnt"></i></span><span class="tr">A<i>/</i>A+^</span></span></th>
+<th class="ch" data-cru="Volnay 1er Champans"><span class="rot"><span class="nm">Volnay 1er Champans<i class="cnt"></i></span><span class="tr">A<i>/</i>A+</span></span></th>
+<th class="ch"><span class="rot"><span class="nm">ROW</span><span class="tr">mean · error</span></span></th></tr></thead><tbody>
+<tr><th class="rh" data-prod="Michel Lafarge"><span class="rhw"><span>Michel Lafarge<i class="cnt"></i></span><span class="tr">S-<i>/</i>A-^</span></span></th>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Michel Lafarge||Volnay 1er Les Caillerets"></td>
+<td class="e"></td>
+<td class="v" data-k="Michel Lafarge||Volnay 1er Clos du Château des Ducs"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Michel Lafarge||Volnay 1er Clos des Chênes"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Marquis d'Angerville"><span class="rhw"><span>Marquis d'Angerville<i class="cnt"></i></span><span class="tr">S-<i>/</i>B</span></span></th>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Marquis d'Angerville||Volnay 1er Les Caillerets"></td>
+<td class="v" data-k="Marquis d'Angerville||Volnay 1er Clos des Ducs"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Marquis d'Angerville||Volnay 1er Taillepieds"></td>
+<td class="v" data-k="Marquis d'Angerville||Volnay 1er Champans"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Chandon de Briailles"><span class="rhw"><span>Chandon de Briailles<i class="cnt"></i></span><span class="tr">A+<i>/</i>A</span></span></th>
+<td class="v" data-k="Chandon de Briailles||Corton Clos du Roi"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Chandon de Briailles||Corton Bressandes"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Domaine de Montille"><span class="rhw"><span>Domaine de Montille<i class="cnt"></i></span><span class="tr">A+<i>/</i>A-</span></span></th>
+<td class="v" data-k="Domaine de Montille||Corton Clos du Roi"></td>
+<td class="v" data-k="Domaine de Montille||Pommard 1er Les Rugiens"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Domaine de Montille||Pommard 1er Les Épenots"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Domaine de Montille||Volnay 1er Taillepieds"></td>
+<td class="v" data-k="Domaine de Montille||Volnay 1er Champans"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Jean-Marc Bouley"><span class="rhw"><span>Jean-Marc Bouley<i class="cnt"></i></span><span class="tr">A<i>/</i>S-</span></span></th>
+<td class="e"></td>
+<td class="v" data-k="Jean-Marc Bouley||Pommard 1er Les Rugiens"></td>
+<td class="v" data-k="Jean-Marc Bouley||Volnay 1er Les Caillerets"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Jean-Marc Bouley||Volnay 1er Clos des Chênes"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="de Courcel"><span class="rhw"><span>de Courcel<i class="cnt"></i></span><span class="tr">A<i>/</i>A+</span></span></th>
+<td class="e"></td>
+<td class="v" data-k="de Courcel||Pommard 1er Les Rugiens"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="de Courcel||Pommard 1er Les Épenots"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Parent"><span class="rhw"><span>Parent<i class="cnt"></i></span><span class="tr">A<i>/</i>A^</span></span></th>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Parent||Corton Renardes"></td>
+<td class="v" data-k="Parent||Pommard 1er Les Épenots"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Yvon Clerget"><span class="rhw"><span>Yvon Clerget<i class="cnt"></i></span><span class="tr">A<i>/</i>A^</span></span></th>
+<td class="e"></td>
+<td class="v" data-k="Yvon Clerget||Pommard 1er Les Rugiens"></td>
+<td class="v" data-k="Yvon Clerget||Volnay 1er Les Caillerets"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Yvon Clerget||Volnay 1er Champans"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Joseph Voillot"><span class="rhw"><span>Joseph Voillot<i class="cnt"></i></span><span class="tr">A<i>/</i>A-</span></span></th>
+<td class="e"></td>
+<td class="v" data-k="Joseph Voillot||Pommard 1er Les Rugiens"></td>
+<td class="v" data-k="Joseph Voillot||Volnay 1er Les Caillerets"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Joseph Voillot||Pommard 1er Les Épenots"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Joseph Voillot||Volnay 1er Champans"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Domaines Bouchard Père et Fils"><span class="rhw"><span>Domaines Bouchard Père et Fils<i class="cnt"></i></span><span class="tr">A<i>/</i>A</span></span></th>
+<td class="e"></td>
+<td class="v" data-k="Domaines Bouchard Père et Fils||Pommard 1er Les Rugiens"></td>
+<td class="v" data-k="Domaines Bouchard Père et Fils||Volnay 1er Les Caillerets"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Domaines Bouchard Père et Fils||Volnay 1er Clos des Chênes"></td>
+<td class="e"></td>
+<td class="v" data-k="Domaines Bouchard Père et Fils||Volnay 1er Taillepieds"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+<tr><th class="rh" data-prod="Pousse d'Or"><span class="rhw"><span>Pousse d'Or<i class="cnt"></i></span><span class="tr">A-<i>/</i>S-</span></span></th>
+<td class="v" data-k="Pousse d'Or||Corton Clos du Roi"></td>
+<td class="e"></td>
+<td class="v" data-k="Pousse d'Or||Volnay 1er Les Caillerets"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="v" data-k="Pousse d'Or||Corton Bressandes"></td>
+<td class="e"></td>
+<td class="e"></td>
+<td class="med" data-row="1"></td></tr>
+</tbody><tfoot><tr><th>column</th>
+<td class="med" data-col="Corton Clos du Roi"></td>
+<td class="med" data-col="Pommard 1er Les Rugiens"></td>
+<td class="med" data-col="Volnay 1er Les Caillerets"></td>
+<td class="med" data-col="Volnay 1er Clos des Ducs"></td>
+<td class="med" data-col="Volnay 1er Clos du Château des Ducs"></td>
+<td class="med" data-col="Corton Renardes"></td>
+<td class="med" data-col="Pommard 1er Les Épenots"></td>
+<td class="med" data-col="Volnay 1er Clos des Chênes"></td>
+<td class="med" data-col="Corton Bressandes"></td>
+<td class="med" data-col="Volnay 1er Taillepieds"></td>
+<td class="med" data-col="Volnay 1er Champans"></td>
+<td class="med"></td></tr></tfoot></table></div>
+<div id="tip"></div>
+<script>const DATA={"Chandon de Briailles||Corton Bressandes": {"2022": {"r": 1.3757733347009065, "mv": 1751.1770833333335, "model": 1272.867440561377, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 4 of 37 within 15%", "dom": true}, "2020": {"r": 1.2639838706298616, "mv": 1480.4723333333332, "model": 1171.2747035257596, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1416 x 1.00 vs 1275 x 1.15), 10 of 43 within 15%", "dom": true}, "2019": {"r": 0.9441645686255785, "mv": 1117.6797619047618, "model": 1183.7764294965755, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1059 x 1.00 vs 1033 x 1.15), 7 of 36 within 15%", "dom": true}, "2018": {"r": 0.8373675739878761, "mv": 909.40375, "model": 1086.0269471255724, "v": 2018, "sub": false, "n": "anchor anchor reachable loose (beat reachable case: 908 x 1.15 vs 1059 x 1.00), 2 of 48 within 15%", "dom": true}, "2017": {"r": 1.0830011485184037, "mv": 1188.46, "model": 1097.3764908983421, "v": 2017, "sub": false, "n": "anchor anchor foreign loose (beat reachable loose: 1075 x 1.30 vs 1398 x 1.15), 5 of 22 within 15%", "dom": true}, "2014": {"r": 0.7040412877163148, "mv": 796.57, "model": 1131.4251222166513, "v": 2014, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 797 x 1.00 vs 797 x 1.15), 2 of 11 within 15%", "dom": true}, "2011": {"r": 0.7491069552763272, "mv": 685.6411111111111, "model": 915.2779937254685, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 6 of 27 within 15%", "dom": true}, "avg": {"r": 0.9660582300985493, "n_v": 7, "xpk": false, "spread": 1.954108883533629, "exc": []}}, "Chandon de Briailles||Corton Clos du Roi": {"2022": {"r": 2.2633141821053275, "mv": 3185.398484848485, "model": 1407.4044646711125, "v": 2022, "sub": false, "n": "anchor anchor foreign case (beat foreign loose: 3135 x 1.15 vs 2823 x 1.30), 11 of 18 within 15%", "dom": true}, "2020": {"r": 1.6020397305359988, "mv": 2063.4375, "model": 1288.0064462007008, "v": 2020, "sub": false, "n": "anchor anchor foreign loose (beat foreign case: 1938 x 1.30 vs 2461 x 1.15), 4 of 9 within 15%", "dom": true}, "2019": {"r": 1.7357696809206762, "mv": 2257.025, "model": 1300.3021223431226, "v": 2019, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 2350 x 1.15 vs 2164 x 1.30), 2 of 3 within 15%", "dom": true}, "2018": {"r": 2.077968783240461, "mv": 2463.9166666666665, "model": 1185.7332441849026, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 4 of 24 within 15%", "dom": true}, "2017": {"r": 1.2702631215827833, "mv": 1520.3023809523813, "model": 1196.8405247080166, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 7 of 27 within 15%", "dom": true}, "2014": {"r": 1.0790919716967167, "mv": 1327.4583333333335, "model": 1230.1623662773586, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 14 of 23 within 15%", "dom": true}, "avg": {"r": 1.6177704532527666, "n_v": 6, "xpk": false, "spread": 2.0974247251108653, "exc": []}}, "de Courcel||Pommard 1er Les \u00c9penots": {"2022": {"r": 0.6501326894196723, "mv": 715.5276666666666, "model": 1100.5871236921926, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 10 of 49 within 15%", "dom": true}, "2020": {"r": 0.8154198730504298, "mv": 840.8241666666668, "model": 1031.1548619991333, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 2 of 7 within 15%", "dom": true}, "2019": {"r": 1.056851303546796, "mv": 1100.3314393939393, "model": 1041.141204728824, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1059 x 1.00 vs 901 x 1.30), 22 of 43 within 15%", "dom": true}, "2018": {"r": 0.9402116630063894, "mv": 917.1983333333334, "model": 975.5232459045772, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 4 of 11 within 15%", "dom": true}, "2017": {"r": 0.8488109761379411, "mv": 835.9016666666666, "model": 984.791302381584, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 2 of 34 within 15%", "dom": true}, "2014": {"r": 1.0698818335230424, "mv": 1083.3575, "model": 1012.5954718126051, "v": 2014, "sub": false, "n": "anchor anchor foreign loose, 4 of 5 within 15%", "dom": true}, "2011": {"r": 0.8129535304872105, "mv": 718.2504166666668, "model": 883.5073466452783, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 10 of 32 within 15%", "dom": true}, "avg": {"r": 0.8737859321255259, "n_v": 7, "xpk": false, "spread": 1.6456361154183012, "exc": []}}, "de Courcel||Pommard 1er Les Rugiens": {"2022": {"r": 1.5974670846877916, "mv": 1894.60568627451, "model": 1186.006087032955, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign case: 1837 x 1.00 vs 1641 x 1.15), 17 of 26 within 15%", "dom": true}, "2019": {"r": 1.0628448038608902, "mv": 1179.1355555555554, "model": 1109.4146118720507, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1201 x 1.00 vs 1129 x 1.30), 6 of 21 within 15%", "dom": true}, "2018": {"r": 1.1922184027753562, "mv": 1223.574, "model": 1026.3002124037437, "v": 2018, "sub": false, "n": "anchor anchor foreign loose (beat reachable loose: 1174 x 1.30 vs 1865 x 1.15), 5 of 10 within 15%", "dom": true}, "2017": {"r": 1.188212575481605, "mv": 1230.7806666666665, "model": 1035.825316162647, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1230 x 1.00 vs 1147 x 1.30), 5 of 26 within 15%", "dom": true}, "2014": {"r": 1.1853546396881534, "mv": 1261.6922222222222, "model": 1064.400627439356, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 3 of 4 within 15%", "dom": true}, "2011": {"r": 1.2504260078073919, "mv": 1104.2995833333334, "model": 883.1386874859637, "v": 2011, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1067 x 1.00 vs 957 x 1.30), 12 of 17 within 15%", "dom": true}, "avg": {"r": 1.2359749627109802, "n_v": 6, "xpk": false, "spread": 1.5030106736983917, "exc": []}}, "Domaine de Montille||Corton Clos du Roi": {"2022": {"r": 1.3951457366473428, "mv": 1718.0925462962962, "model": 1231.4789065872235, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 18 of 45 within 15%", "dom": true}, "2019": {"r": 1.0588425677674358, "mv": 1204.7133333333334, "model": 1137.764357050232, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 6 of 38 within 15%", "dom": true}, "2018": {"r": 1.0627246206242078, "mv": 1102.594423076923, "model": 1037.51658866179, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 13 of 49 within 15%", "dom": true}, "2017": {"r": 1.007497313595352, "mv": 1055.086911764706, "model": 1047.2354591195146, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 974 x 1.00 vs 956 x 1.15), 17 of 41 within 15%", "dom": true}, "2014": {"r": 0.7318143530229743, "mv": 787.7191666666668, "model": 1076.3920704926888, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 2 of 30 within 15%", "dom": true}, "2011": {"r": 0.9004755356584792, "mv": 762.0525, "model": 846.2778496727773, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 2 of 6 within 15%", "dom": true}, "avg": {"r": 1.0069272053406388, "n_v": 6, "xpk": false, "spread": 1.9064202975580942, "exc": []}}, "Domaine de Montille||Pommard 1er Les \u00c9penots": {"2022": {"r": 1.3726844832587595, "mv": 1618.5375, "model": 1179.1038069852616, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 2 of 5 within 15%", "dom": true}, "2020": {"r": 1.3410723129475226, "mv": 1455.056388888889, "model": 1084.994727607822, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 6 of 6 within 15%", "dom": true}, "2019": {"r": 1.1198309432169298, "mv": 1227.9792156862748, "model": 1096.5755350166235, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 17 of 31 within 15%", "dom": true}, "2018": {"r": 1.0225302821611213, "mv": 1028.6926666666668, "model": 1006.026603429799, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 15 of 29 within 15%", "dom": true}, "2017": {"r": 0.973422224201413, "mv": 989.5227272727273, "model": 1016.5401021992517, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 11 of 22 within 15%", "dom": true}, "avg": {"r": 1.1545973705175452, "n_v": 5, "xpk": false, "spread": 1.410163492399095, "exc": []}}, "Domaine de Montille||Pommard 1er Les Rugiens": {"2022": {"r": 1.0702492067600151, "mv": 1405.8552777777777, "model": 1313.577500359705, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1325 x 1.00 vs 1321 x 1.30), 18 of 52 within 15%", "dom": true}, "2020": {"r": 1.0377115507529047, "mv": 1247.473888888889, "model": 1202.1393497873205, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1177 x 1.00 vs 1093 x 1.30), 9 of 39 within 15%", "dom": true}, "2019": {"r": 0.9589847440317676, "mv": 1163.8385714285714, "model": 1213.6153141869145, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1148 x 1.00 vs 1000 x 1.15), 7 of 25 within 15%", "dom": true}, "2018": {"r": 0.999609814473974, "mv": 1106.2525490196076, "model": 1106.6843612392424, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1015 x 1.00 vs 1006 x 1.15), 17 of 41 within 15%", "dom": true}, "2017": {"r": 0.9374104157136823, "mv": 1047.1353888888889, "model": 1117.051156394149, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 965 x 1.00 vs 956 x 1.15), 15 of 50 within 15%", "dom": true}, "2014": {"r": 0.8713059326474947, "mv": 1000.3912500000001, "model": 1148.151541858868, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 4 of 12 within 15%", "dom": true}, "2011": {"r": 0.8627453334709279, "mv": 778.7970833333334, "model": 902.6963729842959, "v": 2011, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 752 x 1.00 vs 706 x 1.30), 4 of 22 within 15%", "dom": true}, "avg": {"r": 0.959775254666678, "n_v": 7, "xpk": false, "spread": 1.2405157874969597, "exc": []}}, "Domaine de Montille||Volnay 1er Champans": {"2022": {"r": 1.1542754903657197, "mv": 1151.6243749999999, "model": 997.7032212952214, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1086 x 1.00 vs 1048 x 1.30), 24 of 52 within 15%", "dom": true}, "2019": {"r": 1.0429292561714592, "mv": 967.7044444444444, "model": 927.8716065525276, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 3 of 19 within 15%", "dom": true}, "2018": {"r": 0.7472802012026737, "mv": 636.1247222222222, "model": 851.2532798252146, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 653 x 1.00 vs 584 x 1.30), 3 of 42 within 15%", "dom": true}, "2017": {"r": 0.9240831257558135, "mv": 794.8494696969697, "model": 860.1493172455207, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 22 of 43 within 15%", "dom": true}, "2014": {"r": 1.134732590045723, "mv": 1006.3233333333334, "model": 886.8374295064395, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 3 of 9 within 15%", "dom": true}, "2011": {"r": 1.637821806276381, "mv": 1175.0, "model": 717.4162631717456, "v": 2011, "sub": false, "n": "anchor anchor reachable loose, 2 of 3 within 15%", "dom": true}, "avg": {"r": 1.0751931848720149, "n_v": 6, "xpk": false, "spread": 2.1917104235338614, "exc": []}}, "Domaine de Montille||Volnay 1er Taillepieds": {"2022": {"r": 1.0671029613404794, "mv": 1169.6922619047618, "model": 1096.1381462529268, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 14 of 51 within 15%", "dom": true}, "2020": {"r": 0.9795933497857381, "mv": 988.0677083333334, "model": 1008.6508943220663, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 956 x 1.00 vs 865 x 1.30), 8 of 43 within 15%", "dom": true}, "2019": {"r": 0.7142490423030602, "mv": 728.1175, "model": 1019.4168376512226, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 4 of 32 within 15%", "dom": true}, "2018": {"r": 0.7079439392921677, "mv": 662.0969444444445, "model": 935.2392296859508, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 6 of 47 within 15%", "dom": true}, "2017": {"r": 0.6962354517994502, "mv": 657.9515277777779, "model": 945.0129637571227, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 6 of 36 within 15%", "dom": true}, "2014": {"r": 0.7485162949956302, "mv": 729.305, "model": 974.3341659706388, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 3 of 27 within 15%", "dom": true}, "2011": {"r": 0.8738874080845151, "mv": 688.796, "model": 788.1976483787319, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 5 of 19 within 15%", "dom": true}, "avg": {"r": 0.8159147693820046, "n_v": 7, "xpk": false, "spread": 1.5326754168902292, "exc": []}}, "Domaines Bouchard P\u00e8re et Fils||Pommard 1er Les Rugiens": {"2022": {"r": 0.539172974718501, "mv": 558.3866666666668, "model": 1035.6354877730976, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 2 of 2 within 15%", "dom": true}, "2020": {"r": 0.5674923562957803, "mv": 544.6108333333334, "model": 959.6795926701064, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 2 of 13 within 15%", "dom": true}, "2019": {"r": 0.5772857151297986, "mv": 559.2483333333333, "model": 968.7548447437164, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 2 of 7 within 15%", "dom": true}, "2018": {"r": 0.6848748722494479, "mv": 613.77, "model": 896.178301861322, "v": 2018, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 638 x 1.15 vs 592 x 1.30), 3 of 7 within 15%", "dom": true}, "2017": {"r": 0.6465315118527881, "mv": 584.785, "model": 904.4957427120003, "v": 2017, "sub": false, "n": "anchor anchor foreign loose (beat reachable loose: 569 x 1.30 vs 706 x 1.15), 4 of 13 within 15%", "dom": true}, "2014": {"r": 1.0775337580396815, "mv": 1001.5116666666668, "model": 929.4480652640349, "v": 2014, "sub": false, "n": "anchor anchor foreign case, 2 of 2 within 15%", "dom": true}, "avg": {"r": 0.66214300119298, "n_v": 6, "xpk": false, "spread": 1.9984936348159057, "exc": []}}, "Domaines Bouchard P\u00e8re et Fils||Volnay 1er Clos des Ch\u00eanes": {"2022": {"r": 0.6698448450394013, "mv": 598.4555555555556, "model": 893.424141407483, "v": 2022, "sub": false, "n": "anchor anchor foreign case (beat reachable case: 561 x 1.15 vs 653 x 1.00), 3 of 7 within 15%", "dom": true}, "2020": {"r": 0.6488674233507616, "mv": 543.1416666666667, "model": 837.061080770359, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 545 x 1.00 vs 474 x 1.30), 6 of 13 within 15%", "dom": true}, "2019": {"r": 0.6985655044246378, "mv": 590.4050000000001, "model": 845.1676990352933, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 611 x 1.00 vs 535 x 1.30), 3 of 7 within 15%", "dom": true}, "2018": {"r": 0.742162797624879, "mv": 587.7194444444444, "model": 791.9009768817638, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 612 x 1.00 vs 516 x 1.30), 3 of 8 within 15%", "dom": true}, "2017": {"r": 1.176878544429462, "mv": 940.8255555555555, "model": 799.4245115681479, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 6 of 26 within 15%", "dom": true}, "avg": {"r": 0.7668556655166006, "n_v": 5, "xpk": false, "spread": 1.8137426877620741, "exc": []}}, "Domaines Bouchard P\u00e8re et Fils||Volnay 1er Les Caillerets": {"2022": {"r": 0.72172104284455, "mv": 632.4491666666667, "model": 876.3069511926211, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 4 of 25 within 15%", "dom": true}, "2020": {"r": 0.6623975519893216, "mv": 537.8910416666666, "model": 812.036578413167, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 8 of 32 within 15%", "dom": true}, "2019": {"r": 0.6729203492729957, "mv": 551.6033333333332, "model": 819.7156378600678, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 2 of 15 within 15%", "dom": true}, "2018": {"r": 0.8287037993375637, "mv": 628.41, "model": 758.3047169595802, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 622 x 1.00 vs 503 x 1.30), 7 of 20 within 15%", "dom": true}, "2017": {"r": 0.7296856072242172, "mv": 558.4594444444444, "model": 765.3425515255387, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 6 of 36 within 15%", "dom": true}, "2014": {"r": 1.1056625404873759, "mv": 869.5550000000001, "model": 786.4560552234142, "v": 2014, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 882 x 1.00 vs 784 x 1.30), 4 of 5 within 15%", "dom": true}, "2011": {"r": 1.376444435049333, "mv": 898.1666666666666, "model": 652.5266431365067, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 3 of 6 within 15%", "dom": true}, "avg": {"r": 0.8403905547627141, "n_v": 7, "xpk": false, "spread": 2.077973312122872, "exc": []}}, "Domaines Bouchard P\u00e8re et Fils||Volnay 1er Taillepieds": {"2022": {"r": 0.5186562333876497, "mv": 463.38, "model": 893.424141407483, "v": 2022, "sub": false, "n": "anchor anchor foreign case (beat reachable case: 479 x 1.15 vs 635 x 1.00), 2 of 13 within 15%", "dom": true}, "2020": {"r": 0.8058702143597253, "mv": 674.5625925925925, "model": 837.061080770359, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 637 x 1.00 vs 580 x 1.15), 9 of 28 within 15%", "dom": true}, "2019": {"r": 0.7019967761158183, "mv": 593.3050000000001, "model": 845.1676990352933, "v": 2019, "sub": false, "n": "anchor anchor foreign case (beat foreign loose: 625 x 1.15 vs 776 x 1.30), 2 of 9 within 15%", "dom": true}, "2018": {"r": 1.1658212667388115, "mv": 923.215, "model": 791.9009768817638, "v": 2018, "sub": false, "n": "anchor anchor foreign case (beat foreign loose: 898 x 1.15 vs 842 x 1.30), 6 of 6 within 15%", "dom": true}, "2017": {"r": 1.0280311917397034, "mv": 821.8333333333334, "model": 799.4245115681479, "v": 2017, "sub": false, "n": "anchor anchor foreign loose (beat foreign case: 784 x 1.30 vs 899 x 1.15), 4 of 6 within 15%", "dom": true}, "2011": {"r": 0.7501340071240801, "mv": 538.0, "model": 717.20518586089, "v": 2011, "sub": false, "n": "anchor anchor reachable loose, 2 of 2 within 15%", "dom": true}, "avg": {"r": 0.8008345914532411, "n_v": 6, "xpk": false, "spread": 2.247772593272707, "exc": []}}, "Jean-Marc Bouley||Volnay 1er Clos des Ch\u00eanes": {"2022": {"r": 1.322766288262503, "mv": 1650.1383333333333, "model": 1247.490465984618, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1605 x 1.00 vs 1542 x 1.30), 3 of 27 within 15%", "dom": true}, "2020": {"r": 1.2575934151979387, "mv": 1469.8633333333335, "model": 1168.7905769624156, "v": 2020, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 1423 x 1.15 vs 1456 x 1.30), 3 of 7 within 15%", "dom": true}, "2019": {"r": 1.5740059874038053, "mv": 1857.5, "model": 1180.1098692539251, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 2 of 2 within 15%", "dom": true}, "2018": {"r": 0.8169915494833859, "mv": 903.3748484848485, "model": 1105.7334057568721, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 11 of 19 within 15%", "dom": true}, "2017": {"r": 1.4694992265626936, "mv": 1640.3116666666665, "model": 1116.2385369222143, "v": 2017, "sub": false, "n": "anchor anchor foreign case (beat foreign loose: 1640 x 1.15 vs 1640 x 1.30), 2 of 5 within 15%", "dom": true}, "2014": {"r": 0.8159588699110205, "mv": 936.52, "model": 1147.753930418241, "v": 2014, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 976 x 1.00 vs 897 x 1.30), 2 of 3 within 15%", "dom": true}, "avg": {"r": 1.1699864295654345, "n_v": 6, "xpk": false, "spread": 1.9290261377702151, "exc": []}}, "Jean-Marc Bouley||Volnay 1er Les Caillerets": {"2022": {"r": 1.3845920049130886, "mv": 1694.1725000000001, "model": 1223.5896885063582, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 2 of 5 within 15%", "dom": true}, "2017": {"r": 1.2599195442886004, "mv": 1346.4127777777778, "model": 1068.6498069509787, "v": 2017, "sub": false, "n": "anchor anchor foreign case (beat foreign loose: 1334 x 1.15 vs 1334 x 1.30), 3 of 6 within 15%", "dom": true}, "2014": {"r": 0.7588891598801452, "mv": 833.3594444444444, "model": 1098.1306474005514, "v": 2014, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 885 x 1.00 vs 777 x 1.15), 3 of 10 within 15%", "dom": true}, "avg": {"r": 1.0980303067594301, "n_v": 3, "xpk": false, "spread": 1.8244983300746629, "exc": []}}, "Joseph Voillot||Pommard 1er Les \u00c9penots": {"2022": {"r": 0.9752857911213001, "mv": 820.1331818181818, "model": 840.9157492956633, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 795 x 1.00 vs 736 x 1.30), 11 of 29 within 15%", "dom": true}, "2020": {"r": 1.0165676431897455, "mv": 800.9183333333333, "model": 787.8652627780318, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 5 of 17 within 15%", "dom": true}, "2018": {"r": 0.8154545826429479, "mv": 607.8066666666666, "model": 745.3593119762977, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 2 of 7 within 15%", "dom": true}, "2017": {"r": 0.971448903531676, "mv": 730.9576666666666, "model": 752.4406729054816, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 5 of 21 within 15%", "dom": true}, "2014": {"r": 1.3381246806902656, "mv": 1035.2866666666666, "model": 773.6847556930336, "v": 2014, "sub": false, "n": "anchor anchor foreign case (beat foreign loose: 1026 x 1.15 vs 1045 x 1.30), 2 of 4 within 15%", "dom": true}, "avg": {"r": 1.009989595961097, "n_v": 5, "xpk": false, "spread": 1.6409554979178678, "exc": []}}, "Joseph Voillot||Pommard 1er Les Rugiens": {"2022": {"r": 1.046066843371426, "mv": 947.9259523809524, "model": 906.1810518014604, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 7 of 37 within 15%", "dom": true}, "2020": {"r": 0.9960070281250581, "mv": 836.3666666666667, "model": 839.7196435863432, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 814 x 1.00 vs 766 x 1.30), 6 of 15 within 15%", "dom": true}, "2019": {"r": 0.8477404813701452, "mv": 718.5961111111111, "model": 847.6604891507518, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 3 of 19 within 15%", "dom": true}, "2018": {"r": 0.8812447024348845, "mv": 691.0333333333333, "model": 784.1560141286568, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 680 x 1.00 vs 655 x 1.30), 4 of 8 within 15%", "dom": true}, "2017": {"r": 0.9438639808532354, "mv": 747.0058333333334, "model": 791.4337748730003, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 2 of 4 within 15%", "dom": true}, "avg": {"r": 0.9401954363826998, "n_v": 5, "xpk": false, "spread": 1.2339470231275724, "exc": []}}, "Joseph Voillot||Volnay 1er Champans": {"2022": {"r": 0.851159386576879, "mv": 605.6374358974359, "model": 711.544095557869, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 566 x 1.00 vs 562 x 1.30), 13 of 39 within 15%", "dom": true}, "2020": {"r": 0.8132712526665101, "mv": 542.1715277777777, "model": 666.6552223506422, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 12 of 30 within 15%", "dom": true}, "2019": {"r": 0.8347950741981138, "mv": 561.9101851851852, "model": 673.1115246756146, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 9 of 25 within 15%", "dom": true}, "2018": {"r": 0.834239773820867, "mv": 526.1455555555555, "model": 630.6886485953289, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 530 x 1.00 vs 508 x 1.30), 3 of 13 within 15%", "dom": true}, "2017": {"r": 0.9251185418963374, "mv": 589.005, "model": 636.6805693815614, "v": 2017, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 598 x 1.15 vs 580 x 1.30), 2 of 2 within 15%", "dom": true}, "2014": {"r": 0.8280839738089538, "mv": 542.1104166666667, "model": 654.6563317402592, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 2 of 6 within 15%", "dom": true}, "avg": {"r": 0.847028730478647, "n_v": 6, "xpk": false, "spread": 1.1375276561947916, "exc": []}}, "Joseph Voillot||Volnay 1er Les Caillerets": {"2022": {"r": 0.8145043338437682, "mv": 624.5363333333332, "model": 766.7685822935435, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 628 x 1.00 vs 562 x 1.30), 5 of 13 within 15%", "dom": true}, "2020": {"r": 0.8819236777655401, "mv": 626.635, "model": 710.5320061115211, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 2 of 9 within 15%", "dom": true}, "2019": {"r": 1.0166440764685145, "mv": 729.1891666666668, "model": 717.2511831275592, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 2 of 7 within 15%", "dom": true}, "2018": {"r": 0.8222363653303622, "mv": 545.5675, "model": 663.5166273396327, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 2 of 6 within 15%", "dom": true}, "2017": {"r": 0.9455792860981601, "mv": 633.2305555555555, "model": 669.6747325848465, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 634 x 1.00 vs 575 x 1.30), 3 of 7 within 15%", "dom": true}, "2014": {"r": 0.8424428565510528, "mv": 579.7262499999999, "model": 688.1490483204875, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 2 of 9 within 15%", "dom": true}, "avg": {"r": 0.8843443453442372, "n_v": 6, "xpk": false, "spread": 1.2481751590821113, "exc": []}}, "Marquis d'Angerville||Volnay 1er Champans": {"2022": {"r": 0.8876853665745138, "mv": 982.7096666666666, "model": 1107.047275611675, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 5 of 49 within 15%", "dom": true}, "2020": {"r": 0.7777733373380535, "mv": 784.1788095238095, "model": 1008.2356541144478, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 7 of 42 within 15%", "dom": true}, "2019": {"r": 0.7441745650529944, "mv": 759.3774999999999, "model": 1020.4292590219378, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 2 of 41 within 15%", "dom": true}, "2018": {"r": 0.7520021756327242, "mv": 694.4661111111112, "model": 923.4894972568358, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 3 of 43 within 15%", "dom": true}, "2017": {"r": 0.6895774673676974, "mv": 644.3373333333334, "model": 934.3944137167681, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 5 of 39 within 15%", "dom": true}, "2014": {"r": 0.8514926962869283, "mv": 823.4863888888889, "model": 967.1091630965651, "v": 2014, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 797 x 1.00 vs 743 x 1.15), 6 of 36 within 15%", "dom": true}, "2011": {"r": 1.1552093425033216, "mv": 857.875, "model": 742.6143197050307, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 4 of 11 within 15%", "dom": true}, "avg": {"r": 0.8258832787487166, "n_v": 7, "xpk": false, "spread": 1.6752423000610306, "exc": []}}, "Marquis d'Angerville||Volnay 1er Clos des Ducs": {"2022": {"r": 1.1886064665034972, "mv": 1795.1291666666668, "model": 1510.2804984288591, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1661 x 1.00 vs 1590 x 1.15), 16 of 49 within 15%", "dom": true}, "2020": {"r": 1.3906913290189695, "mv": 1912.8646666666668, "model": 1375.47752456043, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 15 of 50 within 15%", "dom": true}, "2019": {"r": 1.383087879548081, "mv": 1925.414, "model": 1392.1125537078108, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1854 x 1.00 vs 1817 x 1.30), 5 of 43 within 15%", "dom": true}, "2018": {"r": 1.2260927263722121, "mv": 1544.7091666666668, "model": 1259.86324968845, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1501 x 1.00 vs 1362 x 1.30), 6 of 45 within 15%", "dom": true}, "2017": {"r": 1.2902447733382154, "mv": 1644.7268749999998, "model": 1274.7401958038106, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1513 x 1.00 vs 1366 x 1.30), 20 of 47 within 15%", "dom": true}, "2014": {"r": 0.7043754000547652, "mv": 929.3325, "model": 1319.3710341498927, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 2 of 30 within 15%", "dom": false}, "2011": {"r": 1.3932424327146644, "mv": 1411.501875, "model": 1013.1057178970337, "v": 2011, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1363 x 1.00 vs 1362 x 1.30), 8 of 18 within 15%", "dom": true}, "avg": {"r": 1.3093531219644339, "n_v": 6, "xpk": false, "spread": 1.1721646078648227, "exc": []}}, "Marquis d'Angerville||Volnay 1er Les Caillerets": {"2022": {"r": 1.1181139693137034, "mv": 1404.772, "model": 1256.3763968195897, "v": 2022, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 1380 x 1.15 vs 1296 x 1.30), 5 of 18 within 15%", "dom": true}, "2020": {"r": 1.1384516791688453, "mv": 1301.1103333333335, "model": 1142.8770822168237, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1221 x 1.00 vs 1184 x 1.30), 5 of 35 within 15%", "dom": true}, "2018": {"r": 1.0425783868758296, "mv": 1088.6153703703703, "model": 1044.1568558048612, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1058 x 1.00 vs 903 x 1.30), 18 of 39 within 15%", "dom": true}, "2017": {"r": 1.0675859184332464, "mv": 1125.3095555555556, "model": 1054.0693129476854, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1083 x 1.00 vs 941 x 1.30), 15 of 30 within 15%", "dom": true}, "2014": {"r": 0.798345632857371, "mv": 865.2523333333332, "model": 1083.8066843761585, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 5 of 10 within 15%", "dom": true}, "avg": {"r": 1.0249451783658505, "n_v": 5, "xpk": false, "spread": 1.426013536385482, "exc": []}}, "Marquis d'Angerville||Volnay 1er Taillepieds": {"2022": {"r": 0.8564194496958222, "mv": 1041.6375, "model": 1216.2702521176539, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 6 of 41 within 15%", "dom": true}, "2020": {"r": 1.2541307430695718, "mv": 1389.2128205128206, "model": 1107.7097249945616, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1328 x 1.00 vs 1188 x 1.30), 13 of 44 within 15%", "dom": true}, "2019": {"r": 1.0625870014264693, "mv": 1191.2730555555556, "model": 1121.1063696020483, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1165 x 1.00 vs 1047 x 1.30), 6 of 39 within 15%", "dom": true}, "2018": {"r": 0.8831419400324835, "mv": 896.0379166666665, "model": 1014.6023827536814, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 4 of 32 within 15%", "dom": true}, "2017": {"r": 1.0005927154547742, "mv": 1027.1916666666668, "model": 1026.5831949414135, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 5 of 21 within 15%", "dom": true}, "2014": {"r": 1.112600610860217, "mv": 1182.1666666666665, "model": 1062.5256315046095, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 4 of 9 within 15%", "dom": true}, "2011": {"r": 1.2675978563023635, "mv": 1034.21, "model": 815.8817836887436, "v": 2011, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1043 x 1.00 vs 960 x 1.15), 8 of 16 within 15%", "dom": true}, "avg": {"r": 1.051616752505393, "n_v": 7, "xpk": false, "spread": 1.4801133448715826, "exc": []}}, "Michel Lafarge||Volnay 1er Clos des Ch\u00eanes": {"2022": {"r": 0.7952977292775223, "mv": 1450.9454545454546, "model": 1824.405378176481, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1378 x 1.00 vs 1208 x 1.30), 11 of 40 within 15%", "dom": true}, "2020": {"r": 0.9673001451558425, "mv": 1607.2316666666666, "model": 1661.5645874918423, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1593 x 1.00 vs 1457 x 1.30), 7 of 33 within 15%", "dom": true}, "2019": {"r": 1.4797606906750005, "mv": 2488.453703703704, "model": 1681.6595544030724, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 2472 x 1.00 vs 1949 x 1.30), 9 of 18 within 15%", "dom": true}, "2018": {"r": 0.9125676709140111, "mv": 1388.84, "model": 1521.9035741305224, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1324 x 1.00 vs 1324 x 1.30), 9 of 36 within 15%", "dom": true}, "2017": {"r": 1.0930524333425282, "mv": 1683.1638888888888, "model": 1539.8747924121203, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 9 of 28 within 15%", "dom": true}, "2014": {"r": 0.9785384854668435, "mv": 1559.5833333333333, "model": 1593.7884472569144, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 4 of 27 within 15%", "dom": true}, "2011": {"r": 1.1759002036029793, "mv": 1439.0933333333332, "model": 1223.8226755331154, "v": 2011, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1398 x 1.00 vs 1328 x 1.15), 6 of 11 within 15%", "dom": true}, "avg": {"r": 1.0389412514425178, "n_v": 7, "xpk": false, "spread": 1.8606373892444903, "exc": []}}, "Michel Lafarge||Volnay 1er Clos du Ch\u00e2teau des Ducs": {"2022": {"r": 0.8609281366250052, "mv": 1429.6322222222223, "model": 1660.5709134175129, "v": 2022, "sub": false, "n": "anchor anchor reachable case, 3 of 38 within 15%", "dom": true}, "2020": {"r": 1.0858016024541632, "mv": 1642.1158333333333, "model": 1512.3534811716718, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 6 of 34 within 15%", "dom": true}, "2019": {"r": 1.564366975191775, "mv": 2394.48875, "model": 1530.6438885329069, "v": 2019, "sub": false, "n": "anchor anchor reachable loose (beat reachable case: 2400 x 1.15 vs 2807 x 1.00), 8 of 26 within 15%", "dom": true}, "2018": {"r": 0.9663882443604997, "mv": 1338.674090909091, "model": 1385.2342458852536, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 1307 x 1.00 vs 1271 x 1.15), 11 of 41 within 15%", "dom": true}, "2017": {"r": 1.1295056587289163, "mv": 1583.1056666666666, "model": 1401.591620575152, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 5 of 23 within 15%", "dom": true}, "2014": {"r": 0.992717705015713, "mv": 1440.0995833333334, "model": 1450.6637446448476, "v": 2014, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1416 x 1.00 vs 1309 x 1.30), 4 of 19 within 15%", "dom": true}, "2011": {"r": 1.0966492104958134, "mv": 1221.581111111111, "model": 1113.9214795575458, "v": 2011, "sub": false, "n": "anchor anchor reachable case, 3 of 7 within 15%", "dom": true}, "avg": {"r": 1.0821419266768022, "n_v": 7, "xpk": false, "spread": 1.8170703321700903, "exc": []}}, "Michel Lafarge||Volnay 1er Les Caillerets": {"2022": {"r": 0.9205468490661317, "mv": 1734.83, "model": 1884.5645952293846, "v": 2022, "sub": false, "n": "anchor anchor reachable loose (beat reachable case: 1614 x 1.15 vs 2018 x 1.00), 3 of 16 within 15%", "dom": true}, "2020": {"r": 1.263256293376931, "mv": 2165.62, "model": 1714.3156233252355, "v": 2020, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 2100 x 1.15 vs 2231 x 1.30), 2 of 6 within 15%", "dom": true}, "2018": {"r": 1.0742319608695756, "mv": 1682.5, "model": 1566.2352837072915, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 4 of 6 within 15%", "dom": true}, "2017": {"r": 1.2869004016717314, "mv": 2034.7233333333334, "model": 1581.103969421528, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 2080 x 1.00 vs 2000 x 1.15), 6 of 14 within 15%", "dom": true}, "2014": {"r": 0.9772442854959273, "mv": 1588.7158333333334, "model": 1625.7100265642375, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 2 of 10 within 15%", "dom": true}, "avg": {"r": 1.0945527648861693, "n_v": 5, "xpk": false, "spread": 1.397973827162903, "exc": []}}, "Parent||Corton Renardes": {"2022": {"r": 1.1313658830650157, "mv": 1456.3710714285712, "model": 1287.267976901579, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1398 x 1.00 vs 1239 x 1.30), 14 of 26 within 15%", "dom": true}, "2020": {"r": 0.784698948158026, "mv": 946.392962962963, "model": 1206.0586613305545, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign case: 885 x 1.00 vs 882 x 1.15), 9 of 24 within 15%", "dom": true}, "2019": {"r": 1.037871654214594, "mv": 1263.8566666666666, "model": 1217.7388808475419, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1199 x 1.00 vs 1088 x 1.30), 13 of 31 within 15%", "dom": true}, "2018": {"r": 1.0544520504832366, "mv": 1203.120138888889, "model": 1140.9908476516503, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 12 of 29 within 15%", "dom": true}, "2017": {"r": 1.0915994530424347, "mv": 1257.3380303030306, "model": 1151.8309456812754, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 11 of 23 within 15%", "dom": true}, "2014": {"r": 1.3374410789719868, "mv": 1584.0, "model": 1184.3512397701502, "v": 2014, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 1480 x 1.15 vs 1809 x 1.30), 2 of 5 within 15%", "dom": true}, "avg": {"r": 1.0599916247622445, "n_v": 6, "xpk": false, "spread": 1.7044002443375867, "exc": []}}, "Parent||Pommard 1er Les \u00c9penots": {"2022": {"r": 1.0199266318298663, "mv": 1035.6811538461538, "model": 1015.4467208960139, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 989 x 1.00 vs 912 x 1.30), 13 of 15 within 15%", "dom": true}, "2020": {"r": 1.0862544309133935, "mv": 1033.4469047619048, "model": 951.3856748026476, "v": 2020, "sub": false, "n": "anchor anchor reachable case, 7 of 26 within 15%", "dom": true}, "2019": {"r": 0.9432168420602041, "mv": 906.0536111111111, "model": 960.5994832875123, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 865 x 1.00 vs 819 x 1.30), 6 of 32 within 15%", "dom": true}, "2018": {"r": 1.164625374535436, "mv": 1048.2299999999998, "model": 900.0576691179634, "v": 2018, "sub": false, "n": "anchor anchor foreign loose (beat reachable case: 979 x 1.30 vs 1589 x 1.00), 3 of 34 within 15%", "dom": true}, "2017": {"r": 0.9994290641525478, "mv": 908.09, "model": 908.6087573108578, "v": 2017, "sub": false, "n": "anchor anchor foreign loose (beat reachable loose: 908 x 1.30 vs 1678 x 1.15), 24 of 28 within 15%", "dom": true}, "avg": {"r": 1.0399442370928556, "n_v": 5, "xpk": false, "spread": 1.2347376791869242, "exc": []}}, "Pousse d'Or||Corton Bressandes": {"2022": {"r": 0.7386401819814162, "mv": 740.8199999999999, "model": 1002.9511229848562, "v": 2022, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 798 x 1.15 vs 954 x 1.30), 2 of 9 within 15%", "dom": true}, "2020": {"r": 1.1199765367341008, "mv": 1080.5819444444444, "model": 964.8255200019344, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 1044 x 1.00 vs 982 x 1.30), 12 of 22 within 15%", "dom": true}, "2019": {"r": 1.0691343477595865, "mv": 1041.2969999999998, "model": 973.9627224418325, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 15 of 25 within 15%", "dom": true}, "2018": {"r": 1.0070184421818398, "mv": 945.9030769230772, "model": 939.3105799270686, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 909 x 1.00 vs 799 x 1.30), 13 of 31 within 15%", "dom": true}, "2017": {"r": 0.9685260696397541, "mv": 918.2022222222223, "model": 948.0407920911722, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 12 of 28 within 15%", "dom": true}, "2011": {"r": 0.8941332005340543, "mv": 840.0470833333334, "model": 939.5100001113749, "v": 2011, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 790 x 1.00 vs 790 x 1.15), 4 of 23 within 15%", "dom": true}, "avg": {"r": 0.9576442001429109, "n_v": 6, "xpk": false, "spread": 1.5162680883806545, "exc": []}}, "Pousse d'Or||Corton Clos du Roi": {"2022": {"r": 0.9519745586892904, "mv": 972.0744444444445, "model": 1021.1138896220381, "v": 2022, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 950 x 1.00 vs 866 x 1.30), 12 of 24 within 15%", "dom": true}, "2020": {"r": 0.8086713891022506, "mv": 779.8530000000001, "model": 964.3632883633445, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 779 x 1.00 vs 712 x 1.30), 5 of 36 within 15%", "dom": true}, "2019": {"r": 1.0847534814210347, "mv": 1055.9686904761907, "model": 973.4642096680476, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 14 of 30 within 15%", "dom": true}, "2018": {"r": 1.0087097415935788, "mv": 927.675, "model": 919.6649558816011, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 890 x 1.00 vs 800 x 1.30), 14 of 31 within 15%", "dom": true}, "2017": {"r": 0.9635884373386597, "mv": 894.3866666666667, "model": 928.1832699620993, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 850 x 1.00 vs 828 x 1.15), 12 of 28 within 15%", "dom": true}, "2014": {"r": 0.9254027655319117, "mv": 882.5919791666665, "model": 953.7382122035933, "v": 2014, "sub": false, "n": "anchor anchor reachable case, 16 of 30 within 15%", "dom": true}, "2011": {"r": 1.2645377858426121, "mv": 1078.73, "model": 853.0626858897689, "v": 2011, "sub": false, "n": "anchor anchor foreign loose, 3 of 4 within 15%", "dom": true}, "avg": {"r": 0.9926747649443064, "n_v": 7, "xpk": false, "spread": 1.5637226726253333, "exc": []}}, "Pousse d'Or||Volnay 1er Les Caillerets": {"2022": {"r": 0.6187577757117533, "mv": 570.26, "model": 921.6207414024549, "v": 2022, "sub": false, "n": "anchor anchor reachable loose (beat reachable case: 548 x 1.15 vs 660 x 1.00), 2 of 26 within 15%", "dom": true}, "2020": {"r": 0.5870728221452345, "mv": 510.988, "model": 870.399685907429, "v": 2020, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 498 x 1.15 vs 455 x 1.30), 5 of 37 within 15%", "dom": true}, "2019": {"r": 0.8997439538434496, "mv": 790.5274999999999, "model": 878.6138507773148, "v": 2019, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 814 x 1.00 vs 728 x 1.30), 4 of 9 within 15%", "dom": true}, "2018": {"r": 0.7257197522602236, "mv": 602.3884523809523, "model": 830.0565755649325, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 583 x 1.00 vs 519 x 1.30), 7 of 30 within 15%", "dom": true}, "2017": {"r": 0.9580283129958129, "mv": 802.5833333333334, "model": 837.7449000683564, "v": 2017, "sub": false, "n": "anchor anchor foreign loose (beat foreign case: 774 x 1.30 vs 1288 x 1.15), 3 of 6 within 15%", "dom": true}, "2014": {"r": 1.2346164148672774, "mv": 1062.77, "model": 860.809873578628, "v": 2014, "sub": false, "n": "anchor anchor foreign case, 2 of 2 within 15%", "dom": true}, "2011": {"r": 0.8561274684820108, "mv": 659.17, "model": 769.9437575210222, "v": 2011, "sub": false, "n": "anchor anchor foreign loose, 3 of 4 within 15%", "dom": true}, "avg": {"r": 0.8156560272909666, "n_v": 7, "xpk": false, "spread": 2.1030038664638586, "exc": []}}, "Yvon Clerget||Pommard 1er Les Rugiens": {"2022": {"r": 1.188337226436583, "mv": 1300.3472222222222, "model": 1094.2577521715102, "v": 2022, "sub": false, "n": "anchor anchor reachable loose (beat foreign case: 1250 x 1.15 vs 1337 x 1.15), 9 of 25 within 15%", "dom": true}, "2020": {"r": 1.0057351077061563, "mv": 1019.8177777777778, "model": 1014.0023650002045, "v": 2020, "sub": false, "n": "anchor anchor reachable case (beat foreign loose: 974 x 1.00 vs 888 x 1.30), 6 of 18 within 15%", "dom": true}, "2019": {"r": 0.8348514174313504, "mv": 854.5466666666666, "model": 1023.5913227480814, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 3 of 17 within 15%", "dom": true}, "2018": {"r": 0.6507413353636421, "mv": 616.19125, "model": 946.9065764135989, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 4 of 33 within 15%", "dom": true}, "2017": {"r": 0.6915649026902361, "mv": 660.925, "model": 955.6948269482087, "v": 2017, "sub": false, "n": "anchor anchor reachable case, 5 of 20 within 15%", "dom": true}, "avg": {"r": 0.8520297675242111, "n_v": 5, "xpk": false, "spread": 1.826128389051121, "exc": []}}, "Yvon Clerget||Volnay 1er Les Caillerets": {"2022": {"r": 1.3942817707582504, "mv": 1290.98, "model": 925.9104056835857, "v": 2022, "sub": false, "n": "anchor anchor reachable loose (beat foreign loose: 1250 x 1.15 vs 1185 x 1.30), 7 of 12 within 15%", "dom": true}, "2019": {"r": 1.1747809320554072, "mv": 1017.4962500000001, "model": 866.115734632992, "v": 2019, "sub": false, "n": "anchor anchor reachable case, 4 of 8 within 15%", "dom": true}, "2018": {"r": 0.811661088185874, "mv": 650.3261111111111, "model": 801.2286415807376, "v": 2018, "sub": false, "n": "anchor anchor reachable case, 3 of 9 within 15%", "dom": true}, "2017": {"r": 0.8502059458007902, "mv": 687.5316666666668, "model": 808.6648535715613, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 708 x 1.00 vs 667 x 1.15), 2 of 8 within 15%", "dom": true}, "avg": {"r": 1.0311018723665364, "n_v": 4, "xpk": false, "spread": 1.717812755906014, "exc": []}}, "Jean-Marc Bouley||Pommard 1er Les Rugiens": {"2020": {"r": 1.385071395807042, "mv": 1856.0, "model": 1340.0031259172465, "v": 2020, "sub": false, "n": "the single case offer", "dom": true}, "2018": {"r": 1.8035388892960924, "mv": 2256.8333333333335, "model": 1251.3361074316276, "v": 2018, "sub": false, "n": "anchor anchor reachable case (beat foreign case: 2384 x 1.00 vs 2194 x 1.15), 3 of 6 within 15%", "dom": true}, "2011": {"r": 0.7373811555491089, "mv": 794.0, "model": 1076.7836878184505, "v": 2011, "sub": false, "n": "the single case offer", "dom": true}, "avg": {"r": 1.225829030153974, "n_v": 3, "xpk": false, "spread": 2.4458705999247337, "exc": []}}, "Yvon Clerget||Volnay 1er Champans": {"2017": {"r": 0.9885362036059018, "mv": 760.0091666666667, "model": 768.822794647649, "v": 2017, "sub": false, "n": "anchor anchor reachable case (beat reachable loose: 770 x 1.00 vs 750 x 1.15), 2 of 5 within 15%", "dom": true}, "avg": {"r": 0.9885362036059018, "n_v": 1, "xpk": false, "spread": null, "exc": []}}};const CRUS=["Corton Clos du Roi", "Pommard 1er Les Rugiens", "Volnay 1er Les Caillerets", "Volnay 1er Clos des Ducs", "Volnay 1er Clos du Ch\u00e2teau des Ducs", "Corton Renardes", "Pommard 1er Les \u00c9penots", "Volnay 1er Clos des Ch\u00eanes", "Corton Bressandes", "Volnay 1er Taillepieds", "Volnay 1er Champans"];const PRODS=["Michel Lafarge", "Marquis d'Angerville", "Chandon de Briailles", "Domaine de Montille", "Jean-Marc Bouley", "de Courcel", "Parent", "Yvon Clerget", "Joseph Voillot", "Domaines Bouchard P\u00e8re et Fils", "Pousse d'Or"];const MATQ=[590.4050000000001, 988.0677083333334, 1683.1638888888888];const PARKED_P=[];const PARKED_C=[];const COOL=["#1c4f8f", "#2a78d6", "#7fb0e8", "#c3d9f4"];const WARM=["#f6c9c8", "#ee8f8e", "#e34948", "#a92e2d"];</script>
+<script>
+let VIEW = document.querySelectorAll('.tab')[0].dataset.v;
+const fmt = n => n.toLocaleString('en-US',{maximumFractionDigits:0});
+function band(r){
+  if(r==null) return null;
+  const cool=[[0.55,COOL[0]],[0.72,COOL[1]],[0.87,COOL[2]],[0.95,COOL[3]]];
+  for(const [l,c] of cool) if(r<l) return c;
+  const warm=[[1.05,null],[1.20,WARM[0]],[1.60,WARM[1]],[2.50,WARM[2]]];
+  for(const [l,c] of warm) if(r<l) return c;
+  return WARM[3];
+}
+// ⛔ P50-BELL WEIGHTS, Ken 2026-09-04 — mirrors tools/materiality.py exactly. Q = the panel's
+// live-wine p10/p50/p90 (from the Average view); w(p50)=1, w(p10)=w(p90)=1/4, never zero.
+const Q = (typeof MATQ!=='undefined') ? MATQ : null;   // emitted beside PARKED_P; SUMMARY is not yet defined here
+const bell = mv => { if(!Q||!mv) return 1; const [a,b,c]=Q.map(Math.log), lp=Math.log(mv);
+  const z = lp>=b ? (lp-b)/(c-b) : (lp-b)/(b-a); return Math.exp(-Math.LN2*2*z*z); };
+const gmean = (a,w) => { w = w||a.map(()=>1); const W=w.reduce((s,x)=>s+x,0);
+  return Math.exp(a.reduce((s,x,i)=>s+w[i]*Math.log(x),0)/W); };
+const median = a => {const b=[...a].sort((x,y)=>x-y),m=b.length>>1;
+  return b.length%2?b[m]:(b[m-1]+b[m])/2;};
+// TYPICAL ERROR — RMS of ln(ratio), as a percentage. The one summary a prestige pass cannot
+// game: a pass moves the MEAN, and opposite errors cancel out of a mean but never out of this.
+// Chambertin read mean 0.99 with not one of its eight cells in band. See stats() in the builder.
+const terr = (a,w) => { w = w||a.map(()=>1); const W=w.reduce((s,x)=>s+x,0);
+  return Math.exp(Math.sqrt(a.reduce((s,x,i)=>s+w[i]*Math.log(x)**2,0)/W))-1; };
+function paint(){
+  document.querySelectorAll('.tab').forEach(t=>
+    t.setAttribute('aria-selected', t.dataset.v===VIEW));
+  const rowR={}, colR={};      // LIVE cells only — the scored averages
+  const rowM={},colM={},rowPM={},colPM={};   // market values alongside the wine ratios (bell weights)
+  const rowP={}, colP={};      // ALL cells — used only for a PARKED row or column
+  const rowW={}, colW={};      // LIVE wine-vintages — the typical error is taken over THESE
+  const rowPW={}, colPW={};    // the same, for the shaded all-cells fallback
+  document.querySelectorAll('td.v').forEach(td=>{
+    const d=DATA[td.dataset.k], cell=d[VIEW==='pooled'?'avg':VIEW];
+    td.classList.remove('sub');td.classList.remove('nd');
+    if(!cell){ td.textContent='·'; td.style.background=''; td.style.color='var(--ink3)'; return; }
+    td.textContent = cell.r.toFixed(2);
+    const c=band(cell.r);
+    td.style.background = c || 'var(--mid)';
+    td.style.color = c ? '#14140f' : '';
+    if(VIEW!=='avg' && VIEW!=='pooled' && cell.sub) td.classList.add('sub');
+    // EXCEPTIONS — colour of the wedge names the mechanism: green quality, purple prestige,
+    // amber multiplier. A cell carrying more than one takes the FIRST in doctrine order.
+    const ex=(d.avg&&d.avg.exc)||[];
+    td.classList.remove('exc','q','m');
+    if(ex.length){ td.classList.add('exc');
+      if(ex[0].k==='quality') td.classList.add('q');
+      else if(ex[0].k==='multiplier') td.classList.add('m'); }
+    // PARKED CELLS ARE SHOWN BUT NEVER SCORED — faded, and kept out of every summary.
+    const scored = (VIEW==='avg'||VIEW==='pooled') ? Object.keys(d).some(k=>k!=='avg'&&d[k].dom) : cell.dom;
+    td.classList.toggle('nd', !scored);
+    // ⛔ PARTLY PARKED — the case VINTAGE-SCOPED parking created. Ken, 2026-08-25: *"This is the
+    // case when we park specific vintage. Not a cru or a producer or a wine"* ... *"I can't even
+    // see the fade"*. In the AVERAGE view `scored` is true if ANY vintage survives, so a cell
+    // parked at two of three vintages drew exactly like a fully live one — the average was built
+    // from one number and the picture said nothing. Whole-cell parking was all-or-nothing and
+    // never hit this. A corner wedge marks it; the fade still means NOTHING here is scored.
+    const vs=Object.keys(d).filter(k=>k!=='avg');
+    const nPk=vs.filter(k=>!d[k].dom).length;
+    td.classList.toggle('pp', scored && nPk>0 && nPk<vs.length);
+    if(nPk>0 && nPk<vs.length) td.dataset.pk=nPk+'/'+vs.length;
+    const [p,cr]=td.dataset.k.split('||');
+    // EVERY cell also goes into the PARKED tallies — a parked name's average is taken over all
+    // of its own cells (see the CSS note on td.med.pk), which is the rule the pass applies.
+    // xpk = parked for a reason of its OWN (named cell or named producer), as opposed to a
+    // blanket rule like exclude_village. Only the latter belong in the shaded fallback average.
+    // ⛔ THE ERROR IS COUNTED OVER WINE-VINTAGES, THE MEAN OVER CELLS. Ken, 2026-08-30: *"Error
+    // is also wine by wine."* In the average view a cell is already a mean of its vintages, so an
+    // error taken over cells has had half the miss averaged out of it before it is measured. The
+    // mean stays cell-based — that is what the view IS, and it is what a prestige pass moves.
+    const wks = (VIEW==='avg'||VIEW==='pooled')
+      ? Object.keys(d).filter(k=>k!=='avg'&&d[k].dom)
+      : (cell.dom ? [VIEW] : []);
+    const wns = wks.map(k=>d[k].r);
+    const wmv = wks.map(k=>d[k].mv);           // market values, for the bell weight
+    const allk = Object.keys(d).filter(k=>k!=='avg');
+    // ⛔ EVERY CELL, xpk INCLUDED. Ken, 2026-09-04: *"we should have a row and a column average
+    // even when the whole row or whole column is parked. in those cases the average is computed
+    // with the whole row or whole column."* The xpk gate (added 08-11 to keep independently-parked
+    // cells out of a LIVE name's fallback) also emptied the fallback for every NAMED-parked
+    // producer — Arnoux-Lachaux, Perrot-Minot, Liger-Belair, Coche-Dury drew an em-dash beside a
+    // row full of visible numbers. The fallback only ever fires when a row/column has NO live
+    // cells (see fill), so a live name is untouched by this; a fully parked one now shows the same
+    // all-cells average the pass uses for it (rule 3), shaded so it can never read as headline.
+    (rowP[p]=rowP[p]||[]).push(cell.r); (colP[cr]=colP[cr]||[]).push(cell.r);
+    const pw = wns.length ? wns : allk.map(k=>d[k].r), pm = wns.length ? wmv : allk.map(k=>d[k].mv);
+    (rowPW[p]=rowPW[p]||[]).push(...pw); (colPW[cr]=colPW[cr]||[]).push(...pw);
+    (rowPM[p]=rowPM[p]||[]).push(...pm); (colPM[cr]=colPM[cr]||[]).push(...pm);
+    if(!scored) return;
+    (rowR[p]=rowR[p]||[]).push(cell.r);
+    (colR[cr]=colR[cr]||[]).push(cell.r);
+    (rowW[p]=rowW[p]||[]).push(...wns);
+    (colW[cr]=colW[cr]||[]).push(...wns);
+    (rowM[p]=rowM[p]||[]).push(...wmv);
+    (colM[cr]=colM[cr]||[]).push(...wmv);
+  });
+  const fill=(el,rs,all,parked,ws,allw,ms,allm)=>{
+    // live cells first; with NO live cells, fall back to all of them, drawn shaded.
+    // ⛔ THE FALLBACK IS NOT CONDITIONED ON THE NAME BEING PARKED, and that was a real gap:
+    // Ken, 2026-08-11, "how come I don't see average for roulot?" — Jean-Marc Roulot holds ONE
+    // cell, Meursault village, parked by the blanket village RULE. He is not a parked NAME, so
+    // the first version of this drew him a bare em-dash while his cell sat visible on the grid.
+    // A row with a number in it and no summary is exactly what he asked to stop seeing.
+    // ⚠ DISPLAY ONLY. prestige_pass_run.averages() still applies the narrower rule — a name gets
+    // a LETTER from parked cells only if the name itself is parked — because what may be SHOWN
+    // and what may MOVE a letter are different questions.
+    const pk = (!rs||!rs.length) && all && all.length;
+    const v = (rs&&rs.length) ? rs : (pk ? all : null);
+    el.classList.toggle('pk', !!pk);
+    if(!v){ el.innerHTML='—'; el.style.background=''; return; }
+    // ▶ AVERAGE OVER TYPICAL ERROR, not average over median. Ken, 2026-08-30: *"Replace with
+    // average and std error for the respective producer or cru."* The median said almost nothing
+    // the average had not already said — on a row of 5 cells the two sat within a few percent of
+    // each other and both were AVERAGES, so a row could read 1.00 / 1.00 while every cell in it
+    // was 25% out in alternating directions. The second number now measures the SCATTER, so the
+    // pair answers two different questions: is the row centred, and are its wines actually right.
+    // ⛔ THE ROW / COLUMN AVERAGE IS WINE-WEIGHTED TOO. Ken, 2026-08-30: *"All stats should be
+    // wine by wine."* Averaging cell averages weights a producer's one-vintage cru equally with
+    // one he makes in all five — the mean of a mean. Both numbers here now come off the same flat
+    // list of wine-vintages, so the pair reads as one statement: where the row sits, and how far
+    // its bottles scatter around that. `prestige_pass.py` weights the same way, so the letter a
+    // pass proposes always matches the number Ken is looking at.
+    const vw = (rs&&rs.length) ? ws : (pk ? allw : null);
+    const vm = (rs&&rs.length) ? ms : (pk ? allm : null);
+    const u = (vw&&vw.length) ? vw : v;
+    // p50-bell weights from each wine's market value; the count beside stays plain
+    const wt = (vw&&vw.length&&vm&&vm.length===vw.length) ? vm.map(bell) : null;
+    const g=gmean(u,wt), e=terr(u,wt);
+    el.innerHTML=`${g.toFixed(2)}<span class="gm">±${(e*100).toFixed(0)}%</span>`;
+    const c=pk?null:band(g);
+    el.style.background=c||'var(--sticky)'; el.style.color=c?'#14140f':'';
+  };
+  document.querySelectorAll('td[data-row]').forEach((el,i)=>
+    fill(el,rowR[PRODS[i]],rowP[PRODS[i]],PARKED_P.includes(PRODS[i]),
+         rowW[PRODS[i]],rowPW[PRODS[i]],rowM[PRODS[i]],rowPM[PRODS[i]]));
+  document.querySelectorAll('td[data-col]').forEach(el=>
+    fill(el,colR[el.dataset.col],colP[el.dataset.col],PARKED_C.includes(el.dataset.col),
+         colW[el.dataset.col],colPW[el.dataset.col],colM[el.dataset.col],colPM[el.dataset.col]));
+  // CELL COUNTS, recomputed per view — see the CSS note. rowR/colR already hold exactly the
+  // ratios each mean is taken over, so the count cannot drift from the number beside it.
+  const n = a => `(${(a||[]).length})`;
+  // A PARKED NAME COUNTS ITS OWN CELLS, matching the average now shown beside it. Reporting (0)
+  // next to a visible number would say the mean rests on nothing.
+  // SAME CONDITION AS fill() — no live cells means the shaded all-cells average is what is
+  // drawn, so the count beside the name must be of THOSE cells. Keyed on `parked` it reported
+  // "(0)" next to Roulot's visible 1.40x.
+  const cnt = (live, all, _parked) =>
+    n((live && live.length) ? live : all);
+  document.querySelectorAll('th.rh').forEach(th=>{
+    const e=th.querySelector('.cnt'); const k=th.dataset.prod;
+    if(e) e.textContent=cnt(rowR[k], rowP[k], PARKED_P.includes(k));});
+  document.querySelectorAll('th.ch').forEach(th=>{
+    const e=th.querySelector('.cnt'); const k=th.dataset.cru;
+    if(e) e.textContent=cnt(colR[k], colP[k], PARKED_C.includes(k));});
+}
+function drawStats(){
+  const s=SUMMARY[VIEW], el=document.getElementById('stats');
+  if(!s){ el.innerHTML='<div><dt>no cells</dt></div>'; return; }
+  const pc = n => (n*100).toFixed(0)+'%';
+  el.innerHTML=[
+    ['wines', s.n],
+    ['average (p50-weighted)', s.gm.toFixed(2)+'×'+(s.gm_plain!=null?` <span class="gm">plain ${s.gm_plain.toFixed(2)}</span>`:'')],
+    ['median', s.med.toFixed(2)+'×'],
+    ['typical error (p50-weighted)', (s.rmse*100).toFixed(1)+'%'+(s.rmse_plain!=null?` <span class="gm">plain ${(s.rmse_plain*100).toFixed(1)}%</span>`:'')],
+    ['within ±25%', `${s.inband}/${s.n} (${s.pct}%)`],
+    ['spread', `${s.lo.toFixed(2)}× – ${s.hi.toFixed(2)}×`],
+    ['±1 s.d.', `+${pc(s.ep)} / ${pc(s.em)}`],
+  ].map(([k,v])=>`<div><dt>${k}</dt><dd>${v}</dd></div>`).join('')
+  + (false
+     ? `<div style="flex-basis:100%;color:var(--ink2);padding-top:6px">`
+       + `Every wine-vintage counted separately — the same cells, each vintage its own `
+       + `observation. The GRID below shows each cell's geometric mean (as in Average); `
+       + `these statistics do not.</div>`
+     : '');
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{VIEW=t.dataset.v;paint();drawStats();});
+const tip=document.getElementById('tip');
+document.addEventListener('mouseover',e=>{
+  const td=e.target.closest('td.v'); if(!td){tip.classList.remove('on');return;}
+  const [p,cr]=td.dataset.k.split('||'), d=DATA[td.dataset.k];
+  // MODEL PRICE IS SHOWN BESIDE MARKET, per vintage. Ken, 2026-08-07: *"on mouse over can you
+  // also show model price for each vintage?"* The ratio alone says HOW WRONG the model is and
+  // not in which currency — two cells both reading 1.35x are a HK$900 miss and a HK$9,000 one.
+  // The number was already in the cell data and simply never rendered.
+  let rows='<tr class="hd"><td></td><td>market</td><td>model</td><td>ratio</td></tr>';
+  // ⛔ SAY WHICH VINTAGES ARE PARKED. Ken, 2026-08-25: *"Ponsot beze I still see the parked
+  // vintages"* ... *"When I mouse over I cannot tell the difference"*. The fade told him a cell was
+  // not scored but never WHICH vintage or WHY, and once parking went vintage-scoped a cell can be
+  // half in and half out — Ponsot x Clos de Bèze is parked at 2011 and 2017 and live at 2014.
+  // `dom` was already on every vintage and simply never rendered.
+  let anyParked=false;
+  Object.keys(d).filter(k=>k!=='avg').sort().reverse().forEach(k=>{
+    const c=d[k]; const pk=!c.dom; if(pk) anyParked=true;
+    rows+=`<tr${pk?' class="pkrow"':''}><td>${k}${c.sub?` <i>· v${c.v}</i>`:''}${pk?' <i>parked</i>':''}</td>`+
+          `<td>HK$&thinsp;${fmt(c.mv)}</td>`+
+          `<td>HK$&thinsp;${fmt(c.model)}</td>`+
+          `<td>${c.r.toFixed(2)}×</td></tr>`;
+  });
+  const a=d.avg;
+  rows+=`<tr class="tot"><td>average</td><td colspan="2">${a.n_v} vintage${a.n_v>1?'s':''}</td>`+
+        `<td>${a.r.toFixed(2)}×</td></tr>`;
+  // TYPICAL ERROR over this cell's own LIVE vintages — parked ones are excluded, exactly as they
+  // are from the average line above. Ken, 2026-08-30: *"Add std error in the mouse over too"*.
+  // With one live vintage there is no scatter to report, so the row is omitted rather than shown
+  // as a confident 0%.
+  const liveR=Object.keys(d).filter(k=>k!=='avg'&&d[k].dom).map(k=>d[k].r);
+  if(liveR.length>1) rows+=`<tr><td>typical error</td><td colspan="2"></td>`+
+                     `<td>±${(terr(liveR)*100).toFixed(0)}%</td></tr>`;
+  if(a.spread) rows+=`<tr><td>vintage spread</td><td colspan="2"></td>`+
+                     `<td>${a.spread.toFixed(2)}×</td></tr>`;
+  const parkedNote = anyParked
+    ? `<div class="tippk">Struck rows are <b>parked</b> — shown for context, counted in no `
+      +`average, no fit and no summary. The <b>average</b> row above uses only the live vintages.</div>`
+    : '';
+  const ex=(a.exc)||[];
+  const exHtml = ex.length
+    ? `<div class="tipexc">`+ex.map(x=>
+        `<b>${x.k} exception</b> &nbsp;${x.d}<i>${x.w}</i>`).join('')
+      +`<i style="padding-top:4px">This cell is hand-adjusted — it is not evidence `
+      +`that the letters are right.</i></div>`
+    : '';
+  tip.innerHTML=`<div class="w">${p}<br>${cr}</div><table>${rows}</table>${parkedNote}${exHtml}`;
+  tip.classList.add('on');
+});
+document.addEventListener('mousemove',e=>{
+  const r=tip.getBoundingClientRect();
+  tip.style.left=Math.min(e.clientX+16, innerWidth-r.width-10)+'px';
+  tip.style.top=Math.min(e.clientY+16, innerHeight-r.height-10)+'px';
+});
+paint();
+drawStats();
+</script>
+</div></body></html>

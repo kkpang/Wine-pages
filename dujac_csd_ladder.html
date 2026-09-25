@@ -1,0 +1,264 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dujac Clos Saint-Denis</title></head><body><nav aria-label="Wine pages" style="font:14px system-ui;padding:12px 16px;border-bottom:1px solid #ddd;background:#faf7f2;color:#542636"><a style="color:inherit" href="index.html">Cellar dashboard</a> · <a style="color:inherit" href="pages.html">All wine pages</a></nav>
+<style>
+:root{--bg:#f6f4f3;--card:#fffdfd;--ink:#1a1618;--ink2:#5e5559;--ink3:#8d848a;
+ --line:#e6e0e2;--rule:#d0c8cb;--wine:#8e3f56;--gold:#8a7434;--good:#3f6b45;--bad:#95412f;
+ --shadow:0 1px 2px rgba(26,22,24,.05),0 10px 30px -20px rgba(26,22,24,.35)}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#141114;--card:#1d191c;
+ --ink:#f2ecee;--ink2:#a79ea3;--ink3:#7a7076;--line:#2d282b;--rule:#3a3438;--wine:#dc9bad;
+ --gold:#cfb469;--good:#7fae84;--bad:#d08d78;
+ --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -22px rgba(0,0,0,.9)}}
+:root[data-theme=dark]{--bg:#141114;--card:#1d191c;--ink:#f2ecee;--ink2:#a79ea3;--ink3:#7a7076;
+ --line:#2d282b;--rule:#3a3438;--wine:#dc9bad;--gold:#cfb469;--good:#7fae84;--bad:#d08d78;
+ --shadow:0 1px 2px rgba(0,0,0,.5),0 12px 32px -22px rgba(0,0,0,.9)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1240px;margin:0 auto;padding:44px clamp(16px,4vw,40px) 90px}
+h1{font:600 34px/1.1 ui-serif,"Iowan Old Style",Georgia,serif;margin:0 0 4px;letter-spacing:-.015em;text-wrap:balance}
+.sub{color:var(--ink2);margin:0 0 18px;font-size:15px;max-width:62ch}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 26px}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;
+ padding:5px 12px;font-size:12.5px;color:var(--ink2);white-space:nowrap}
+.chip b{color:var(--ink);font-weight:620}
+.alert{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);
+ border-radius:11px;padding:18px 22px;margin:0 0 26px}
+.alert p{margin:0 0 10px;font-size:15px}.alert p:last-child{margin:0}
+.alert b{color:var(--gold)}
+.verdict{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--wine);
+ border-radius:12px;padding:24px 26px;box-shadow:var(--shadow);margin:0 0 28px}
+.vhead{font:600 27px/1.15 ui-serif,Georgia,serif;margin:0 0 4px}
+.vhead em{font-style:normal;color:var(--wine)}
+.vline{color:var(--ink2);font-size:14.5px;margin:0 0 18px}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;
+ border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;margin:0 0 18px}
+.three div{font-size:14px;color:var(--ink2)}
+.three b{display:block;font:600 22px/1.2 ui-serif,Georgia,serif;color:var(--ink);
+ font-variant-numeric:tabular-nums}
+.verdict p{margin:0 0 12px;font-size:15.5px}.verdict p:last-child{margin:0}
+h2{font:600 13px/1.2 ui-sans-serif,sans-serif;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--ink3);margin:38px 0 12px;padding-bottom:7px;border-bottom:1px solid var(--rule)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:18px 20px}
+.card h3{font:600 15px/1.3 ui-serif,Georgia,serif;margin:0 0 8px;color:var(--wine)}
+.card p{margin:0 0 10px;font-size:14.5px}.card p:last-child{margin:0}
+.pick{border-left:3px solid var(--gold)}
+.pick .buy{font-size:13px;color:var(--ink2);margin:0 0 10px;font-variant-numeric:tabular-nums}
+.for,.ag{font-size:14px;margin:0 0 6px}
+.for b{color:var(--good)}.ag b{color:var(--bad)}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:11px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th{text-align:left;font:600 10.5px/1.2 ui-sans-serif,sans-serif;letter-spacing:.06em;
+ text-transform:uppercase;color:var(--ink3);padding:11px 9px;border-bottom:1px solid var(--rule);
+ white-space:nowrap;position:sticky;top:0;background:var(--card)}
+td{padding:9px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.y{font-weight:650}
+td.cr{white-space:normal;min-width:230px;font-size:12px;color:var(--ink2)}
+td.mch{white-space:normal;min-width:170px;font-size:12px;color:var(--ink2)}
+tr.top td{background:color-mix(in srgb,var(--gold) 9%,transparent)}
+tr.dead td{background:color-mix(in srgb,var(--ink3) 7%,transparent)}
+.own{display:inline-block;font-size:9.5px;font-weight:700;letter-spacing:.04em;
+ background:color-mix(in srgb,var(--wine) 20%,transparent);color:var(--ink);
+ border-radius:4px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.pos{color:var(--good);font-weight:600}.neg{color:var(--bad);font-weight:600}
+.mut{color:var(--ink3)}
+.note{font-size:13.5px;color:var(--ink2);margin:14px 0 0;max-width:96ch}
+.warn{border-left:3px solid var(--gold);padding-left:14px;margin:16px 0}
+</style>
+<div class="wrap">
+
+<h1>Dujac · Clos Saint-Denis</h1>
+<p class="sub">Fifteen vintages, 2010–2024. The Morey grand cru that fits your palate better than
+anything else the domaine makes — and the one year on the ladder that is genuinely mispriced.</p>
+<div class="chips">
+  <span class="chip">producer capability <b>S</b></span>
+  <span class="chip">cru level <b>S</b></span>
+  <span class="chip">cru style <b>Delicate &amp; Perfumed</b> · Rich &amp; Silky 20%</span>
+  <span class="chip">producer style <b>Delicate &amp; Perfumed</b> · Spiced &amp; Herbal 30%</span>
+  <span class="chip">resolves to <b>Delicate &amp; Perfumed</b> · 69%</span>
+  <span class="chip">6.6 ha grand cru in Morey-Saint-Denis · Dujac farms ~1.5 ha, the largest holding</span>
+  <span class="chip">whole-bunch · destemmed only in the hottest years</span>
+</div>
+
+<div class="alert">
+  <p><b>Prices on this page were read on 13 August and have not been refreshed.</b> Twelve days.
+  On this exact wine that has mattered before — the 2018 moved 6% and changed merchant in five days
+  — so treat every number as a fortnight old. Say the word and I will re-price the ladder; it is
+  about fifteen paced lookups.</p>
+  <p><b>You already own three of the fifteen rows</b> — 2018 (1 bottle), 2022 (3) and 2023 (3),
+  marked <span class="own">OWN</span> in the table. All three are young: not one of them opens
+  before 2029. <b>You have nothing in this wine you can drink this decade</b>, which is the gap the
+  ladder is really pointing at.</p>
+</div>
+
+<div class="verdict">
+  <p class="vhead">BUY — the <em>2022</em></p>
+  <p class="vline">1×75cl · <b>HK$5,330</b> a bottle · Hong Kong Wine Vault · Hong Kong retail</p>
+  <div class="three">
+    <div><b>28% cheaper</b> than the model's price for a wine this good</div>
+    <div><b>44% cheaper</b> measured against your taste</div>
+    <div><b>2034–2046</b> when to drink</div>
+  </div>
+  <p>The 2022 is the clearest mispricing on the ladder and it is not close — the next-best row is
+  16% behind it. It is a <em>great+</em> year, it carries the joint-highest gate scores here
+  (William Kelley 95–97, Burghound 94–96), and it is asking <b>HK$5,330</b> while the merely
+  <em>very good</em> 2011 and 2014 ask 5,460 and 6,120. The market has simply not repriced it yet.</p>
+  <p><b>You already hold three bottles at HK$5,800.</b> That is 9% above today's cheapest, so this
+  is not a correction of a bad buy — it is the same wine, still cheap, and the honest recommendation
+  is to add rather than to admire. Where it is weak: single bottles only, no case anywhere near this
+  price, and you will not open one before 2034.</p>
+</div>
+
+<h2>In the glass</h2>
+<div class="cols">
+  <div class="card">
+    <h3>Look</h3>
+    <p>Pale. Noticeably paler than most grand cru red Burgundy and paler than the domaine's own
+    Clos de la Roche — a light translucent red that lets you see the stem of the glass through it.</p>
+    <p class="mut" style="font-size:13px">⚠ Inferred from the site and the house method. Critics
+    rarely describe colour and none of the fifteen notes here does.</p>
+  </div>
+  <div class="card">
+    <h3>Nose</h3>
+    <p>Rose petal, red cherry and wild strawberry, with a green-tea and dried-herb edge from the
+    whole bunches. Clos Saint-Denis has always been the scented one of the two Morey grand crus;
+    Dujac's method pushes it further that way.</p>
+  </div>
+  <div class="card">
+    <h3>Palate</h3>
+    <p>Light-bodied and smooth, with the tannin fine and arriving late — closer to silk than to
+    grip. It tastes weightless for a grand cru, which is the point of the wine rather than a
+    shortcoming, and it needs a decade before the stems fold in.</p>
+  </div>
+</div>
+
+<h2>Palate fit — the best-matched wine Dujac makes</h2>
+<div class="card">
+  <p><b>The land and the grower pull the same way, which is rare.</b> Clos Saint-Denis is itself a
+  <em>Delicate &amp; Perfumed</em> site and Dujac is a <em>Delicate &amp; Perfumed</em> grower, so
+  the wine resolves at <b>69%</b> to the single style you like most. Set against the domaine's
+  Clos de la Roche — the same producer, the next vineyard along — the difference is stark: that cru
+  is <em>Firm &amp; Structured</em> land, the blend lands at only 33% Delicate &amp; Perfumed, and
+  the base palate fit falls from <b>+2.3 to +0.9</b>. <b>Same producer, same village, and the wine
+  suits you two and a half times better.</b> If you are choosing between the two Dujac grand crus,
+  this is the one.</p>
+  <p><b>Then the year moves the fit more than the wine does.</b> Cool vintages take <b>+2.6</b> —
+  2013, 2014 and 2021 — while the hot 2015, 2018 and 2020 give almost all of it back at +0.1. That
+  is a <b>2.5-point swing</b> from one vineyard, and it is why the <em>exceptional</em> 2015 lands
+  bottom of this ladder while the merely <em>very good</em> 2014 does not.</p>
+  <p>The practical reading: <b>2021 is the pure palate pick and 2022 is the buy.</b> The 2021 is a
+  cool year with the top palate-adjusted score on the page (96.8) and a gate score of NM 94, but it
+  is asking 5,900 against the 2022's 5,330 for a lesser vintage — and it is the one row with a
+  materially cheaper case sitting behind it. Taste says 2021; the money says 2022.</p>
+</div>
+
+<h2>What to buy</h2>
+<div class="cols">
+  <div class="card pick">
+    <h3>1 · 2022 — the mispriced year</h3>
+    <p class="buy">1×75cl · HK$5,330 · Hong Kong Wine Vault · HK retail</p>
+    <p class="for"><b>For</b> — 28% under the model on quality, 44% under against your taste, and
+    the widest margin on the ladder by a distance. <em>great+</em> vintage, WK 95–97 and BH 94–96,
+    and it is cheaper than four <em>very good</em> years sitting above it. 27 offers, 6 of them
+    cases, so the pool is real and not one stray listing.</p>
+    <p class="ag"><b>Against</b> — bottles only; the cheapest case behind it is 5,300, effectively
+    the same money, so there is no case discount to be had. You already own three. Drinking starts
+    2034.</p>
+  </div>
+  <div class="card pick">
+    <h3>2 · 2020 — the best-reviewed year, in a real case</h3>
+    <p class="buy">3×75cl · HK$20,994 · HK$6,998/btl · Y18 Elegant Spirits · HK pre-arrival</p>
+    <p class="for"><b>For</b> — the only vintage here with three gate critics behind it and the
+    highest score on the page: <b>Neal Martin 97</b>, WK 95–97, BH 93–96. A three-pack, your
+    preferred format, and still 5% under the model. 40 offers, the second-deepest market.</p>
+    <p class="ag"><b>Against</b> — a hot year, so the palate fit collapses to +0.1 and the
+    adjusted score (95.4) is the second-lowest here despite the reviews. Pre-arrival, and a cheaper
+    case sits 5% behind it.</p>
+  </div>
+  <div class="card pick">
+    <h3>3 · 2012 — the one you could actually open</h3>
+    <p class="buy">6×75cl · HK$40,910 · HK$6,818/btl · Crop &amp; Vine · HK pre-arrival</p>
+    <p class="for"><b>For</b> — <b>Antonio Galloni 97</b>, a classic cool-edged year, palate fit
+    +1.7, and a peak window of <b>2024–2035</b> that is open now. It is the only genuine six-pack
+    on the ladder at a sane per-bottle price, and it fills the hole in your holding — everything you
+    own in this wine is locked up until 2029.</p>
+    <p class="ag"><b>Against</b> — HK$40,910 is the largest outlay on the page, it is priced
+    almost exactly on the model (1% under), and a cheaper case sits 7% behind it. Pre-arrival from a
+    merchant you have not bought from often.</p>
+  </div>
+</div>
+
+<h2>What the ladder says, and what to distrust</h2>
+<div class="card">
+  <p><b>The model tracks this market better than most.</b> Correlating the two across the fourteen
+  priced vintages, with the level divided out, gives <b>r = +0.64</b> — the strongest reading on any
+  ladder run so far, against +0.43 on Grivault and +0.47 on Trapet's Chapelle. The market really
+  does pay for vintage quality on this wine: the median cheapest-buyable climbs cleanly from
+  HK$5,900 in a <em>very good</em> year to 7,449 in a <em>great+</em> one to 9,900 for the
+  <em>exceptional</em> 2015. The percentages on this page are therefore worth more than usual.</p>
+  <p><b>But the market discriminates more than the model does, not less.</b> The model's prices
+  span 1.40× top to bottom; the actual asking prices span 1.93×. That is the opposite of the usual
+  warning — here the framework is the conservative one, and the extremes of the ladder (the 2022 at
+  the cheap end, the 2015 at the dear end) are further apart in reality than the model believes.</p>
+  <p><b>The August version of this report said the framework could not tell these two vineyards
+  apart. That has since been fixed — and the fix overshot.</b> When this ladder was first run the
+  model priced Dujac's Clos Saint-Denis and his Clos de la Roche identically, and the report asked
+  for a small step between them. A step went in. It was not small: the framework now asks a <b>33% premium</b> for Clos Saint-Denis over the domaine's
+  Clos de la Roche. Across the fourteen vintages where both were priced on the same day, the market
+  pays a median of <b>7%</b> — and on three of them, 2010, 2019 and 2021, Clos de la Roche was the
+  dearer wine. The correction went in the right direction and roughly four times too far. Since a
+  level error like this multiplies every row by the same number, <b>the order of the ladder is
+  unaffected but every "% cheaper" on the page is overstated</b> — by close to a fifth. The 2022
+  is still the buy; it is not 28% cheap, it is more like 15%. <b>The step wants revisiting, and
+  this ladder is the instrument that should set it</b> — one producer across two crus is the only
+  measurement that isolates the vineyard.</p>
+  <p class="warn"><b>What to distrust.</b> <b>Seven of the thirteen rows with a case pool have a
+  cheaper case sitting behind the cheapest-buyable</b> — worst on the 2021, where a case runs 19%
+  under it. That is the Hong-Kong-first rule doing its job: those cheaper cases are in bond
+  overseas, and if you are willing to handle in-bond yourself the whole ladder is cheaper than it
+  reads here. <b>The 2024 cannot be bought at all</b> — it has a market value of HK$5,707 and no
+  purchasable offer on either query, which for an unreleased vintage is normal, not a warning.
+  <b>The 2015 has no case offer anywhere</b> on the ladder, and <b>the 2010 rests on 8 offers with
+  a single case</b>, the thinnest row here — its eye-catching 69% gap to the next case is one
+  listing, not a market. Finally, five of the fifteen rows lean on Stephen Tanzer, who leaves the
+  Burgundy gate after the 2015 vintage, so critic coverage is thinner at the old end than the column
+  makes it look.</p>
+</div>
+
+<h2>The ladder</h2>
+<div class="scroll">
+<table>
+<thead><tr>
+<th>Vintage</th><th>Year rated</th><th>Character</th><th>Quality</th><th>For you</th>
+<th>Critics (gate)</th><th>Cheapest</th><th>Pack</th><th>Outlay</th><th>Next case</th>
+<th>Merchant</th><th>vs quality</th><th>vs your taste</th><th>vs next offer</th>
+<th>Offers</th><th>Cases</th><th>My read</th><th>Drink</th>
+</tr></thead>
+<tbody>
+<tr class="top"><td class="y">2022<span class="own">OWN 3</span></td><td>great+</td><td>warm</td><td>95.2</td><td>96.3</td><td class="cr">WK 95-97 · BH 94-96</td><td><b>HK$5,330</b></td><td>1 btl</td><td>HK$5,330</td><td>HK$5,300</td><td class="mch">Hong Kong Wine Vault · HK · Retail</td><td class="pos">+28%</td><td class="pos">+44%</td><td class="mut">-1%</td><td>27</td><td>6</td><td><span class="pos">+1</span></td><td>2034–2046</td></tr>
+<tr class="top"><td class="y">2020</td><td>great+</td><td>hot</td><td>95.2</td><td>95.4</td><td class="cr">NM 97 (2027-55) · WK 95-97 · BH 93-96</td><td><b>HK$6,998</b></td><td>3×75cl</td><td>HK$20,994</td><td>HK$6,668</td><td class="mch">Y18 Elegant Spirits Ltd. · HK · Pre Arrival</td><td class="pos">+5%</td><td class="pos">+8%</td><td class="neg">-5%</td><td>40</td><td>3</td><td><span class="pos">+1</span></td><td>2032–2044</td></tr>
+<tr><td class="y">2023<span class="own">OWN 3</span></td><td>very good</td><td>warm</td><td>94.2</td><td>95.6</td><td class="cr">WK 94-96 · BH 94-96 · NM 93-95 (2028-50)</td><td><b>HK$5,135</b></td><td>1 btl</td><td>HK$5,135</td><td>HK$5,035</td><td class="mch">Hong Kong Wine Vault · HK · Retail</td><td class="pos">+10%</td><td class="pos">+36%</td><td class="neg">-2%</td><td>51</td><td>21</td><td><span class="mut">0</span></td><td>2035–2046</td></tr>
+<tr class="top"><td class="y">2012</td><td>great</td><td>classic</td><td>94.9</td><td>96.6</td><td class="cr">AG 97 (2022-42) · NM 95-97</td><td><b>HK$6,818</b></td><td>6×75cl</td><td>HK$40,910</td><td>HK$6,360</td><td class="mch">Crop & Vine - HK · HK · Pre Arrival</td><td class="neg">-1%</td><td class="pos">+34%</td><td class="neg">-7%</td><td>25</td><td>14</td><td><span class="pos">+1</span></td><td>2024–2035</td></tr>
+<tr><td class="y">2010</td><td>great</td><td>classic</td><td>94.9</td><td>96.6</td><td class="cr">AG 95-97 (2025-45) · ST 95+</td><td><b>HK$8,489</b></td><td>1 btl</td><td>HK$8,489</td><td>HK$14,330</td><td class="mch">Y18 Elegant Spirits Ltd. · HK · Pre Arrival</td><td class="neg">-25%</td><td class="pos">+17%</td><td class="pos">+69%</td><td>8</td><td>1</td><td><span class="pos">+1</span></td><td>2022–2033</td></tr>
+<tr><td class="y">2011</td><td>very good</td><td>warm</td><td>94.2</td><td>95.6</td><td class="cr">ST 93+ · BH 93 · NM 92 (2015-25)</td><td><b>HK$5,460</b></td><td>1 btl</td><td>HK$5,460</td><td>HK$6,713</td><td class="mch">Vintage Grand Cru · HK · Retail</td><td class="pos">+5%</td><td class="pos">+32%</td><td class="pos">+23%</td><td>42</td><td>20</td><td><span class="neg">−1</span></td><td>2023–2034</td></tr>
+<tr><td class="y">2018<span class="own">OWN 1</span></td><td>very good+</td><td>hot</td><td>94.5</td><td>94.7</td><td class="cr">WK 96+ (2028-60)</td><td><b>HK$6,080</b></td><td>1 btl</td><td>HK$6,080</td><td>HK$5,994</td><td class="mch">Hong Kong Wine Vault · HK · Retail</td><td class="pos">+2%</td><td class="pos">+6%</td><td class="mut">-1%</td><td>37</td><td>18</td><td><span class="pos">+1</span></td><td>2030–2041</td></tr>
+<tr><td class="y">2016</td><td>great+</td><td>classic</td><td>95.2</td><td>96.7</td><td class="cr">NM 96 (2022-50)</td><td><b>HK$7,900</b></td><td>1 btl</td><td>HK$7,900</td><td>HK$8,276</td><td class="mch">Altaya Wines · HK · Retail</td><td class="neg">-7%</td><td class="pos">+27%</td><td class="pos">+5%</td><td>18</td><td>8</td><td><span class="pos">+1</span></td><td>2028–2040</td></tr>
+<tr><td class="y">2019</td><td>great+</td><td>warm</td><td>95.2</td><td>96.3</td><td class="cr">NM 94-96 (2024-48)</td><td><b>HK$7,965</b></td><td>1 btl</td><td>HK$7,965</td><td>HK$9,807</td><td class="mch">Y18 Elegant Spirits Ltd. · HK · Pre Arrival</td><td class="neg">-8%</td><td class="pos">+17%</td><td class="pos">+23%</td><td>23</td><td>1</td><td><span class="mut">0</span></td><td>2031–2043</td></tr>
+<tr><td class="y">2014</td><td>very good</td><td>cool</td><td>94.2</td><td>96.8</td><td class="cr">ST 93+ (2025-37) · NM 90-92 (2018-30)</td><td><b>HK$6,120</b></td><td>1 btl</td><td>HK$6,120</td><td>HK$7,420</td><td class="mch">Vintage Grand Cru · HK · Retail</td><td class="neg">-7%</td><td class="pos">+44%</td><td class="pos">+21%</td><td>20</td><td>5</td><td><span class="neg">−1</span></td><td>2026–2037</td></tr>
+<tr><td class="y">2021</td><td>very good</td><td>cool</td><td>94.2</td><td>96.8</td><td class="cr">NM 94 (2028-45)</td><td><b>HK$5,900</b></td><td>1 btl</td><td>HK$5,900</td><td>HK$4,770</td><td class="mch">Altaya Wines · HK · Retail</td><td class="neg">-3%</td><td class="pos">+46%</td><td class="neg">-19%</td><td>25</td><td>6</td><td><span class="mut">0</span></td><td>2033–2044</td></tr>
+<tr><td class="y">2017</td><td>very good+</td><td>warm</td><td>94.5</td><td>95.8</td><td class="cr">NM 94-96 (2022-45)</td><td><b>HK$6,871</b></td><td>6×75cl</td><td>HK$41,226</td><td>HK$6,360</td><td class="mch">Y18 Elegant Spirits Ltd. · HK · Pre Arrival</td><td class="neg">-10%</td><td class="pos">+19%</td><td class="neg">-7%</td><td>32</td><td>9</td><td><span class="mut">0</span></td><td>2029–2040</td></tr>
+<tr><td class="y">2013</td><td>very good</td><td>cool</td><td>94.2</td><td>96.8</td><td class="cr">ST 94+ (2024-38) · NM 93-95 (2018-36) · BH 92-95</td><td><b>HK$7,200</b></td><td>1 btl</td><td>HK$7,200</td><td>HK$7,508</td><td class="mch">Ginsberg+Chan Wine Merchants Asia · HK · Retail</td><td class="neg">-26%</td><td class="pos">+34%</td><td class="pos">+4%</td><td>47</td><td>16</td><td><span class="mut">0</span></td><td>2025–2036</td></tr>
+<tr><td class="y">2015</td><td>exceptional</td><td>hot</td><td>95.6</td><td>95.7</td><td class="cr">ST 94</td><td><b>HK$9,900</b></td><td>1 btl</td><td>HK$9,900</td><td><span class="mut">none</span></td><td class="mch">Altaya Wines · HK · Retail</td><td class="neg">-23%</td><td class="neg">-19%</td><td class="mut">—</td><td>14</td><td>0</td><td><span class="mut">0</span></td><td>2027–2039</td></tr>
+<tr class="dead"><td class="y">2024</td><td colspan="4"><span class="mut">not scored — no buyable offer on primary or wide</span></td><td class="cr">NM 93-95 (2027-48) · BH 92-94</td><td colspan="5"><span class="mut">market value HK$5,707 · nothing purchasable</span></td><td colspan="6"></td></tr>
+</tbody>
+</table>
+</div>
+<p class="note">Ranked on your criteria — value (half), the next-case comparison (a quarter), the
+pack (15%) and my read (10%). <b>Cheapest · Pack · Outlay · Merchant all describe the same
+cheapest-buyable offer</b>; <b>Next case</b> is the cheapest case that is not that offer, so a
+negative <em>vs next offer</em> means a cheaper case exists that the Hong-Kong-first rule did not
+pick. Gate critics only (BH · JM · WK · NM · AG, plus ST through 2015), de-duplicated on the
+reviewer rather than the masthead. Prices captured 13 August 2026.</p>
+
+</div>
+</body></html>
